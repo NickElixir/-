@@ -7,263 +7,302 @@
   </head>
   <body>
     <script>
-        var arrProducts = [];
+        "use strict";
 
-        function getRandomInt(min, max) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-        }
+var arrProducts = [];
 
-        function fadeOut(time){ 
-        var EndTime = Date.now() + time;
-        var _this = this;
-        handler();
-        function handler(){
-            var now = Date.now();
-            var step = EndTime - now;
-            if(step/time < 0 ){
-                _this.style.opacity = 0;
-                return;            
-            }
-              else
-          _this.style.opacity = (step/time);
-            setTimeout(handler,0);
-          }
-        }
-        Element.prototype.fadeOut = fadeOut;
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
-        
-        function setProduct (name, shelfLife, count) {
-            try {
-              if (arguments.length < 2) {
-                throw new Error("Объект продукта не заполнен полностью");
-              }
-              var object = new Object();
-              object.name = name;
-              object.shelfLife = shelfLife;
-              if (count) {
-                object.count = count;
-              } else {
-                object.count = 1;
-              }
-              object.datePurchase = new Date();
-              object.index = arrProducts.length;
-              arrProducts.push(object);
-            } catch (e) {
-              alert("Извините, в данных ошибка. Таблица будет не полной.");
-            }
+function fadeOut(time) {
+  var EndTime = Date.now() + time;
+  var _this = this;
+  handler();
+  function handler() {
+    var now = Date.now();
+    var step = EndTime - now;
+    if (step / time < 0) {
+      _this.style.opacity = 0;
+      return;
+    } else _this.style.opacity = step / time;
+    setTimeout(handler, 0);
+  }
+}
+Element.prototype.fadeOut = fadeOut;
+function setProduct(name, shelfLife, count) {
+  try {
+    if (arguments.length < 2) {
+      throw new Error("Объект продукта не заполнен полностью");
+    }
+    var object = new Object();
+    object.name = name;
+    object.shelfLife = shelfLife;
+    if (count) {
+      object.count = count;
+    } else {
+      object.count = 1;
+    }
+    object.datePurchase = new Date();
+    object.index = arrProducts.length;
+    arrProducts.push(object);
+  } catch (e) {
+    alert("Извините, в данных ошибка. Таблица будет не полной.");
+  }
+}
+function deleteProduct(index) {
+  arrProducts.splice(index, 1);
+}
+function createDivContainer() {
+  var div = document.createElement("div");
+  div.className = "container";
+  document.body.appendChild(div);
+}
+function createMenu() {
+  var section = document.createElement("section");
+  section.className = "menu";
+  var nav = document.createElement("nav");
+  var ul = document.createElement("ul");
+  var main = document.createElement("li");
+  main.innerHTML = "Главная";
+  ul.appendChild(main);
+  var about = document.createElement("li");
+  about.innerHTML = "О сервисе";
+  ul.appendChild(about);
+  nav.appendChild(ul);
+  section.appendChild(nav);
+  var openNav = document.createElement("div");
+  openNav.className = "openNav";
+  openNav.addEventListener("click", function () {
+    var body = document.querySelector("body");
+    var nav = document.querySelector("nav");
+    var container = document.querySelector(".container");
+    body.classList.toggle("navOpen");
+    nav.classList.toggle("open");
+    container.classList.toggle("open");
+    openNav.classList.toggle("open");
+  });
+  var icon = document.createElement("div");
+  icon.className = "icon";
+  openNav.appendChild(icon);
+  section.appendChild(openNav);
+  document.body.appendChild(section);
+}
+function createAbout() {
+  var section = document.createElement("section");
+  section.className = "about";
+  section.innerHTML = "<h1>О сервисе</h1><p>Задача программы – автоматическая сортировка продуктов по сроку годности. В будущем будет реализованы рекомендации и список попупок</p><p>Автор – Nick Elixir</p>";
+  //section.hidden = true;
+  document.body.querySelector(".container").appendChild(section);
+}
+function writeProducts() {
+  var div = document.querySelector('.container');
+  var section = document.createElement("section");
+  section.className = "main";
+  section.appendChild(createTableProducts(arrProducts));
+  section.appendChild(createButtonRationalChoice());
+  section.appendChild(createButtonRandomChoiceOfRationals());
+  section.appendChild(createButtonSaveChanges());
+  div.appendChild(section);
+}
+function updateShelfLifes() {
+  nowDay = new Date();
+  for (var _i = 0; _i < arrProducts.length; _i++) {
+    var difference = nowDay - arrProducts[_i].datePurchase;
+    difference = new Date(difference);
+    difference = difference.getDate();
+    arrProducts[_i].shelfLife = arrProducts[_i].shelfLife - difference;
+  }
+}
+function createTableProducts(arr) {
+  var table = document.createElement("table");
+  table.setAttribute("cellspacing", "0");
+  var thead = document.createElement("thead");
+  var th1 = document.createElement("th");
+  th1.innerHTML = "<p>Род и вид</p>";
+  thead.appendChild(th1);
+  var th2 = document.createElement("th");
+  th2.innerHTML = "<p>Срок годности</p>";
+  thead.appendChild(th2);
+  var th3 = document.createElement("th");
+  th3.innerHTML = "<p>Количество</p>";
+  thead.appendChild(th3);
+  var th4 = document.createElement("th");
+  thead.appendChild(th4);
+  table.appendChild(thead);
+  var tbody = document.createElement("tbody");
+  for (var _i2 = 0; _i2 < arr.length; _i2++) {
+    var tr = document.createElement("tr");
+    tr.setAttribute("index", arr[_i2].index);
+    var td1 = document.createElement("td");
+    td1.innerHTML = "<p>" + arr[_i2].name + "</p>";
+    var td2 = document.createElement("td");
+    td2.innerHTML = "<p>" + arr[_i2].shelfLife + " дн.</p>";
+    var td3 = document.createElement("td");
+    td3.innerHTML = "<p>" + arr[_i2].count + "шт. </p>";
+    var td4 = document.createElement("td");
+    td4.innerHTML = "<div class='switch' select='off' index='" + arr[_i2].index + "' count='0'></div>";
+    td4.style.padding = "0.5em";
+    tr.appendChild(td1);
+    tr.appendChild(td2);
+    tr.appendChild(td3);
+    tr.appendChild(td4);
+    tbody.appendChild(tr);
+  }
+  table.appendChild(tbody);
+  table.className = "arr-products";
+  table.addEventListener("click", toggleChoiceButton);
+  return table;
+}
+function rationalChoice() {
+  var arrMinShelfLife = [];
+  var minShelfLife = arrProducts[0].shelfLife;
+  var alertString = "";
+  for (var _i3 = 0; _i3 < arrProducts.length; _i3++) {
+    if (arrProducts[_i3].shelfLife < minShelfLife) {
+      minShelfLife = arrProducts[_i3].shelfLife;
+    }
+  }
+  for (var _i4 = 0; _i4 < arrProducts.length; _i4++) {
+    if (minShelfLife == arrProducts[_i4].shelfLife) {
+      arrMinShelfLife.push(arrProducts[_i4]);
+    }
+  }
+  var rows = document.querySelectorAll('.arr-products tr');
+  for (var _i5 = 0; _i5 < arrMinShelfLife.length; _i5++) {
+    for (var j = 0; j < rows.length; j++) {
+      if (rows[j].getAttribute('index') == arrMinShelfLife[_i5].index) {
+        rows[j].className = 'lighted';
+      }
+    }
+  }
+  var button = document.getElementById("random-choice");
+  button.hidden = false;
+}
+function createButtonRationalChoice() {
+  var button = document.createElement("div");
+  button.className = "button";
+  button.innerHTML = "<p>Рациональный выбор</p>";
+  button.addEventListener("click", rationalChoice);
+  return button;
+}
+function randomChoiceOfRationals() {
+  var arrMinShelfLife = [];
+  var minShelfLife = arrProducts[0].shelfLife;
+  var alertString = "";
+  for (var _i6 = 0; _i6 < arrProducts.length; _i6++) {
+    if (arrProducts[_i6].shelfLife < minShelfLife) {
+      minShelfLife = arrProducts[_i6].shelfLife;
+    }
+  }
+  for (var _i7 = 0; _i7 < arrProducts.length; _i7++) {
+    if (minShelfLife == arrProducts[_i7].shelfLife) {
+      arrMinShelfLife.push(arrProducts[_i7]);
+    }
+  }
+  i = getRandomInt(0, arrMinShelfLife.length - 1);
+  alert(arrMinShelfLife[i].name + " - " + arrMinShelfLife[i].shelfLife + " дн. " + " - " + arrMinShelfLife[i].count + "шт.");
+}
+function createButtonRandomChoiceOfRationals() {
+  var button = document.createElement('div');
+  button.className = "button";
+  button.innerHTML = "<p>Случайный выбор</p>";
+  button.setAttribute("id", "random-choice");
+  button.addEventListener("click", randomChoiceOfRationals);
+  button.hidden = true;
+  return button;
+}
+function toggleChoiceButton(event) {
+  var target = event.target;
+  if (target.className == "switch" || target.parentNode.className == "switch") {
+    if (target.getAttribute("select") == "off") {
+      target.style.backgroundColor = "#f40";
+      target.setAttribute("select", "on");
+      var num = document.createElement('p');
+      num.innerHTML = '1';
+      target.appendChild(num);
+      target.setAttribute("count", "1");
+    } else {
+      if (target.className !== "switch") {
+        target = target.parentNode;
+      }
+      var _i8 = target.parentNode.parentNode.getAttribute("index");
+      var maxCount = arrProducts[_i8].count;
+      var absoluteCount = parseInt(prompt("Сколько всего вы хотите выделить?"));
+      if (absoluteCount == 0 || false) {
+        target.removeChild(target.firstChild);
+        target.style.backgroundColor = "#0f9";
+        target.setAttribute("select", "off");
+        target.setAttribute("count", "0");
+      } else if (absoluteCount > 0) {
+        if (absoluteCount > maxCount) {
+          absoluteCount = maxCount;
         }
-        function devareProduct(index){
-          arrProducts.splice(index, 1);
+        target.setAttribute("count", absoluteCount);
+        target.innerHTML = "<p>" + absoluteCount + "</p>";
+      }
+    }
+  }
+}
+function saveChanges() {
+  var confidence = confirm("Вы уверены, что хотите сохранить результат?");
+  if (confidence) {
+    (function () {
+      var switches = document.body.querySelectorAll(".switch");
+      var toTrash = [];
+      for (var _i9 = 0; _i9 < switches.length; _i9++) {
+        var j = switches[_i9].getAttribute("index");
+        var maxCount = arrProducts[j].count;
+        var count = switches[_i9].getAttribute("count");
+        //console.log(count, maxCount , arrProducts[j],j,i)
+        if (count == maxCount) {
+          toTrash.push(_i9);
+        } else if (count !== 0) {
+          var newCount = maxCount - count;
+          arrProducts[j].count = newCount;
+          switches[_i9].setAttribute("count", newCount);
+          switches[_i9].parentNode.parentNode.children[2].innerHTML = newCount + " шт.";
+          switches[_i9].innerHTML = "";
+          switches[_i9].style.backgroundColor = "#0f9";
+          switches[_i9].setAttribute("select", "off");
+          switches[_i9].setAttribute("count", "0");
         }
-        function createDivContainer() {
-          var div = document.createElement("div");
-          div.className = "container";
-          document.body.appendChild(div);
-        }
-        function writeProducts() {
-          var div = document.querySelector('.container'); 
-          div.appendChild(createTableProducts(arrProducts)); 
-        }
-        function updateShelfLifes() {
-          nowDay = new Date();
-          for(var i = 0; i < arrProducts.length; i++) {
-            var difference = nowDay - arrProducts[i].datePurchase;
-            difference = new Date(difference);
-            difference = difference.getDate();
-            arrProducts[i].shelfLife = arrProducts[i].shelfLife - difference;
-          }
-        }
-        function createTableProducts(arr) {
-          var table = document.createElement("table");
-          table.setAttribute("cellspacing", "0");
-          var thead = document.createElement("thead");
-          var th1 = document.createElement("th");
-          th1.innerHTML = "<p>Род и вид</p>";
-          thead.appendChild(th1);
-          var th2 = document.createElement("th");
-          th2.innerHTML = "<p>Срок годности</p>"
-          thead.appendChild(th2)
-          var th3 = document.createElement("th");
-          th3.innerHTML = "<p>Количество</p>";
-          thead.appendChild(th3);
-          var th4 = document.createElement("th");
-          thead.appendChild(th4);
-          table.appendChild(thead);
-          var tbody = document.createElement("tbody");
-          for (var i = 0; i < arr.length; i++) {
-            var tr = document.createElement("tr");
-            tr.setAttribute("index", arr[i].index);
-            var td1 = document.createElement("td");
-            td1.innerHTML = "<p>" + arr[i].name + "</p>";
-            var td2 = document.createElement("td");
-            td2.innerHTML = "<p>" + arr[i].shelfLife + " дн.</p>";
-            var td3 = document.createElement("td");
-            td3.innerHTML = "<p>" + arr[i].count + "шт. </p>";
-            var td4 = document.createElement("td");
-            td4.innerHTML = "<div class='switch' select='off' index='" + arr[i].index + "' count='0'></div>";
-            td4.style.padding = "0.5em";
-            tr.appendChild(td1);
-            tr.appendChild(td2);
-            tr.appendChild(td3);
-            tr.appendChild(td4);
-            tbody.appendChild(tr);
-          }
-          table.appendChild(tbody);
-          table.className = "arr-products";
-          table.addEventListener("click", toggleChoiceButton);
-          return table;
-        }
-        function rationalChoice() {
-          var arrMinShelfLife = [];
-          var minShelfLife = arrProducts[0].shelfLife;
-          var alertString = "";
-          for(var i = 0; i < arrProducts.length; i++) {
-              if (arrProducts[i].shelfLife < minShelfLife) {
-                  minShelfLife = arrProducts[i].shelfLife;
-              }
-          }
-          for(var i = 0; i < arrProducts.length; i++) {
-              if(minShelfLife == arrProducts[i].shelfLife) {
-                  arrMinShelfLife.push(arrProducts[i]);
-              }
-          }
-          var rows = document.querySelectorAll('.arr-products tr');
-          for (var i = 0; i < arrMinShelfLife.length; i++) {
-            for (var j = 0; j < rows.length; j++) {
-              if (rows[j].getAttribute('index') == arrMinShelfLife[i].index) {
-                rows[j].className = 'lighted';
-              }
-            }
-          }
-          var button = document.getElementById("random-choice");
-          button.hidden = false;
-        }
-        function createButtonRationalChoice() {
-          var buttonRationalChoice = document.createElement("div");
-          buttonRationalChoice.className = "button";
-          buttonRationalChoice.innerHTML = "<p>Рациональный выбор</p>";
-          buttonRationalChoice.addEventListener("click", rationalChoice);
-          var div = document.querySelector('.container');
-          div.appendChild(buttonRationalChoice);
-        }
-        function randomChoiceOfRationals() {
-          var arrMinShelfLife = [];
-          var minShelfLife = arrProducts[0].shelfLife;
-          var alertString = "";
-          for(var i = 0; i < arrProducts.length; i++) {
-              if (arrProducts[i].shelfLife < minShelfLife) {
-                  minShelfLife = arrProducts[i].shelfLife;
-              }
-          }
-          for(var i = 0; i < arrProducts.length; i++) {
-              if(minShelfLife == arrProducts[i].shelfLife) {
-                  arrMinShelfLife.push(arrProducts[i]);
-              }
-          }
-           i = getRandomInt(0, (arrMinShelfLife.length - 1));
-            alert(arrMinShelfLife[i].name + " - " + arrMinShelfLife[i].shelfLife + " дн. " + " - " + arrMinShelfLife[i].count + "шт.");
-        }
-        function createButtonRandomChoiceOfRationals() {
-          var button = document.createElement('div');
-          button.className = "button";
-          button.innerHTML = "<p>Случайный выбор</p>";
-          button.setAttribute("id", "random-choice");
-          button.addEventListener("click", randomChoiceOfRationals);
-          button.hidden = true;
-          var container = document.querySelector(".container");
-          container.appendChild(button);
-        }
-        function toggleChoiceButton(event) {
-          var target = event.target;
-          if (target.className == "switch" || target.parentNode.className == "switch") {
-            if (target.getAttribute("select") == "off") {
-              target.style.backgroundColor = "#f40";
-              target.setAttribute("select", "on");
-              var num = document.createElement('p');
-              num.innerHTML = '1';
-              target.appendChild(num);
-              target.setAttribute("count", "1");
-            } else {
-              if (target.className !== "switch") {
-                target = target.parentNode;
-              }
-              var i = target.parentNode.parentNode.getAttribute("index");
-              var maxCount = arrProducts[i].count;
-              var absoluteCount = parseInt(prompt("Сколько всего вы хотите выделить?"));
-              if (absoluteCount == 0 || false) {
-                target.removeChild(target.firstChild);
-                target.style.backgroundColor = "#0f9";
-                target.setAttribute("select", "off");
-                target.setAttribute("count", "0");
-              } else if (absoluteCount > 0) {
-                if (absoluteCount > maxCount) {
-                  absoluteCount = maxCount;
-                }
-                target.setAttribute("count", absoluteCount);
-                target.innerHTML = "<p>" + absoluteCount + "</p>";
-              }
-            }
-          }
-        }
-        function saveChanges() {
-          var confidence = confirm("Вы уверены, что хотите сохранить результат?");
-          if (confidence) {
-            var switches = document.body.querySelectorAll(".switch");
-            var toTrash = [];
-            for (var i = 0; i < switches.length; i++) {
-              var j = switches[i].getAttribute("index");
-              var maxCount = arrProducts[j].count;
-              var count = switches[i].getAttribute("count");
-              //console.log(count, maxCount , arrProducts[j],j,i)
-              if (count == maxCount) {
-                toTrash.push(i)
-              } else if (count !== 0) {
-                var newCount = maxCount - count;
-                arrProducts[j].count = newCount;
-                switches[i].setAttribute("count", newCount);
-                switches[i].parentNode.parentNode.children[2].innerHTML = newCount + " шт.";
-                switches[i].innerHTML = "";
-                switches[i].style.backgroundColor = "#0f9";
-                switches[i].setAttribute("select", "off");
-                switches[i].setAttribute("count", "0");
-              }
-            }
-            if(toTrash.length){
-              toTrash.reverse().forEach(i=>{
-                devareProduct(i);
-                switches[i].closest('tr').fadeOut(900); 
-                setTimeout(function() {
-                  switches[i].closest('tr').remove(); 
-                }, 1000);
-              })
-              setTimeout(function(){
-                var trs = document.querySelectorAll('tbody tr');
-                Array.prototype.forEach.call(trs,(e,ind)=>{
-                    e.setAttribute('index',ind);
-                    e.querySelector('.switch').setAttribute('index',ind);
-                })
-              },1100)
-            }
-          }
-        }
-        function createButtonSaveChanges() {
-          var div = document.createElement("div");
-          div.className = "button";
-          div.innerHTML = "<p>Сохранить изменения</p>";
-          div.addEventListener("click", saveChanges);
-          var container = document.body.querySelector(".container");
-          container.appendChild(div);
-        }
-        createDivContainer();
-        setProduct("Яблоко", 2, 4);
-        setProduct("Куриные котлеты", 4, 6);
-        setProduct("Сыр", 6);
-        setProduct("Колбаса", 2);
-        setProduct("Бананы", 2, 6);
-        writeProducts();
-        createButtonRationalChoice();
-        createButtonRandomChoiceOfRationals();
-        createButtonSaveChanges();
+      }
+      if (toTrash.length) {
+        toTrash.reverse().forEach(function (i) {
+          deleteProduct(i);
+          switches[i].closest('tr').fadeOut(900);
+          setTimeout(function () {
+            switches[i].closest('tr').remove();
+          }, 1000);
+        });
+        setTimeout(function () {
+          var trs = document.querySelectorAll('tbody tr');
+          Array.prototype.forEach.call(trs, function (e, ind) {
+            e.setAttribute('index', ind);
+            e.querySelector('.switch').setAttribute('index', ind);
+          });
+        }, 1100);
+      }
+    })();
+  }
+}
+function createButtonSaveChanges() {
+  var button = document.createElement("div");
+  button.className = "button";
+  button.innerHTML = "<p>Сохранить изменения</p>";
+  button.addEventListener("click", saveChanges);
+  return button;
+}
+createMenu();
+createDivContainer();
+setProduct("Яблоко", 2, 4);
+setProduct("Куриные котлеты", 4, 6);
+setProduct("Сыр", 6);
+setProduct("Колбаса", 2);
+setProduct("Бананы", 2, 6);
+writeProducts();
+createAbout();
     </script>
   </body>
 </html>
