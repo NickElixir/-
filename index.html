@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" name=viewport content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css">
+    <link href="fonts/Roboto_Condensed/font.css" rel="stylesheet">
+  </head>
+  <body>
+    <script>
+        let arrProducts = [];
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function fadeOut(time){ 
+        let EndTime = Date.now() + time;
+        let _this = this;
+        handler();
+        function handler(){
+            let now = Date.now();
+            let step = EndTime - now;
+            if(step/time < 0 ){
+                _this.style.opacity = 0;
+                return;            
+            }
+              else
+          _this.style.opacity = (step/time);
+            setTimeout(handler,0);
+          }
+        }
+        Element.prototype.fadeOut = fadeOut;        
+        function setProduct (name, shelfLife, count) {
+            try {
+              if (arguments.length < 2) {
+                throw new Error("Объект продукта не заполнен полностью");
+              }
+              let object = new Object();
+              object.name = name;
+              object.shelfLife = shelfLife;
+              if (count) {
+                object.count = count;
+              } else {
+                object.count = 1;
+              }
+              object.datePurchase = new Date();
+              object.index = arrProducts.length;
+              arrProducts.push(object);
+            } catch (e) {
+              alert("Извините, в данных ошибка. Таблица будет не полной.");
+            }
+        }
+        function deleteProduct(index){
+          arrProducts.splice(index, 1);
+        }
+        function createDivContainer() {
+          let div = document.createElement("div");
+          div.className = "container";
+          document.body.appendChild(div);
+        }
+        function writeProducts() {
+          let div = document.querySelector('.container'); 
+          let section = document.createElement("section");
+          section.className = "main";
+          section.appendChild(createTableProducts(arrProducts));
+          section.appendChild(createButtonRationalChoice());
+          section.appendChild(createButtonRandomChoiceOfRationals());
+          section.appendChild(createButtonSaveChanges());
+          div.appendChild(section);
+        }
+
+        function createMenu() {
+          let section = document.createElement("section");
+          section.className = "menu";
+          let nav = document.createElement("nav");
+          let ul = document.createElement("ul");
+          let main = document.createElement("li");
+          main.innerHTML = "Главная";
+          ul.appendChild(main);
+          let about = document.createElement("li");
+          about.innerHTML = "О сервисе";
+          ul.appendChild(about);
+          nav.appendChild(ul);
+          section.appendChild(nav);
+          let openNav = document.createElement("div");
+          openNav.className = "openNav";
+          openNav.addEventListener("click", function(){
+            let body = document.querySelector("body");
+            let nav = document.querySelector("nav");
+            let container = document.querySelector(".container");
+            body.classList.toggle("navOpen");
+            nav.classList.toggle("open");
+            container.classList.toggle("open");
+            openNav.classList.toggle("open");
+          });
+          let icon = document.createElement("div");
+          icon.className = "icon";
+          openNav.appendChild(icon);
+          section.appendChild(openNav);
+          document.body.appendChild(section);
+        }
+        function updateShelfLifes() {
+          nowDay = new Date();
+          for(let i = 0; i < arrProducts.length; i++) {
+            let difference = nowDay - arrProducts[i].datePurchase;
+            difference = new Date(difference);
+            difference = difference.getDate();
+            arrProducts[i].shelfLife = arrProducts[i].shelfLife - difference;
+          }
+        }
+        function createTableProducts(arr) {
+          let table = document.createElement("table");
+          table.setAttribute("cellspacing", "0");
+          let thead = document.createElement("thead");
+          let th1 = document.createElement("th");
+          th1.innerHTML = "<p>Род и вид</p>";
+          thead.appendChild(th1);
+          let th2 = document.createElement("th");
+          th2.innerHTML = "<p>Срок годности</p>"
+          thead.appendChild(th2)
+          let th3 = document.createElement("th");
+          th3.innerHTML = "<p>Количество</p>";
+          thead.appendChild(th3);
+          let th4 = document.createElement("th");
+          thead.appendChild(th4);
+          table.appendChild(thead);
+          let tbody = document.createElement("tbody");
+          for (let i = 0; i < arr.length; i++) {
+            let tr = document.createElement("tr");
+            tr.setAttribute("index", arr[i].index);
+            let td1 = document.createElement("td");
+            td1.innerHTML = "<p>" + arr[i].name + "</p>";
+            let td2 = document.createElement("td");
+            td2.innerHTML = "<p>" + arr[i].shelfLife + " дн.</p>";
+            let td3 = document.createElement("td");
+            td3.innerHTML = "<p>" + arr[i].count + "шт. </p>";
+            let td4 = document.createElement("td");
+            td4.innerHTML = "<div class='switch' select='off' index='" + arr[i].index + "' count='0'></div>";
+            td4.style.padding = "0.5em";
+            tr.appendChild(td1);
+            tr.appendChild(td2);
+            tr.appendChild(td3);
+            tr.appendChild(td4);
+            tbody.appendChild(tr);
+          }
+          table.appendChild(tbody);
+          table.className = "arr-products";
+          table.addEventListener("click", toggleChoiceButton);
+          return table;
+        }
+        function rationalChoice() {
+          let arrMinShelfLife = [];
+          let minShelfLife = arrProducts[0].shelfLife;
+          let alertString = "";
+          for(let i = 0; i < arrProducts.length; i++) {
+              if (arrProducts[i].shelfLife < minShelfLife) {
+                  minShelfLife = arrProducts[i].shelfLife;
+              }
+          }
+          for(let i = 0; i < arrProducts.length; i++) {
+              if(minShelfLife == arrProducts[i].shelfLife) {
+                  arrMinShelfLife.push(arrProducts[i]);
+              }
+          }
+          let rows = document.querySelectorAll('.arr-products tr');
+          for (let i = 0; i < arrMinShelfLife.length; i++) {
+            for (let j = 0; j < rows.length; j++) {
+              if (rows[j].getAttribute('index') == arrMinShelfLife[i].index) {
+                rows[j].className = 'lighted';
+              }
+            }
+          }
+          let button = document.getElementById("random-choice");
+          button.hidden = false;
+        }
+        function createButtonRationalChoice() {
+          let button = document.createElement("div");
+          button.className = "button";
+          button.innerHTML = "<p>Рациональный выбор</p>";
+          button.addEventListener("click", rationalChoice);
+          return button;
+        }
+        function randomChoiceOfRationals() {
+          let arrMinShelfLife = [];
+          let minShelfLife = arrProducts[0].shelfLife;
+          let alertString = "";
+          for(let i = 0; i < arrProducts.length; i++) {
+              if (arrProducts[i].shelfLife < minShelfLife) {
+                  minShelfLife = arrProducts[i].shelfLife;
+              }
+          }
+          for(let i = 0; i < arrProducts.length; i++) {
+              if(minShelfLife == arrProducts[i].shelfLife) {
+                  arrMinShelfLife.push(arrProducts[i]);
+              }
+          }
+           i = getRandomInt(0, (arrMinShelfLife.length - 1));
+            alert(arrMinShelfLife[i].name + " - " + arrMinShelfLife[i].shelfLife + " дн. " + " - " + arrMinShelfLife[i].count + "шт.");
+        }
+        function createButtonRandomChoiceOfRationals() {
+          let button = document.createElement('div');
+          button.className = "button";
+          button.innerHTML = "<p>Случайный выбор</p>";
+          button.setAttribute("id", "random-choice");
+          button.addEventListener("click", randomChoiceOfRationals);
+          button.hidden = true;
+          return button;
+        }
+        function toggleChoiceButton(event) {
+          let target = event.target;
+          if (target.className == "switch" || target.parentNode.className == "switch") {
+            if (target.getAttribute("select") == "off") {
+              target.style.backgroundColor = "#f40";
+              target.setAttribute("select", "on");
+              let num = document.createElement('p');
+              num.innerHTML = '1';
+              target.appendChild(num);
+              target.setAttribute("count", "1");
+            } else {
+              if (target.className !== "switch") {
+                target = target.parentNode;
+              }
+              let i = target.parentNode.parentNode.getAttribute("index");
+              let maxCount = arrProducts[i].count;
+              let absoluteCount = parseInt(prompt("Сколько всего вы хотите выделить?"));
+              if (absoluteCount == 0 || false) {
+                target.removeChild(target.firstChild);
+                target.style.backgroundColor = "#0f9";
+                target.setAttribute("select", "off");
+                target.setAttribute("count", "0");
+              } else if (absoluteCount > 0) {
+                if (absoluteCount > maxCount) {
+                  absoluteCount = maxCount;
+                }
+                target.setAttribute("count", absoluteCount);
+                target.innerHTML = "<p>" + absoluteCount + "</p>";
+              }
+            }
+          }
+        }
+        function saveChanges() {
+          let confidence = confirm("Вы уверены, что хотите сохранить результат?");
+          if (confidence) {
+            let switches = document.body.querySelectorAll(".switch");
+            let toTrash = [];
+            for (let i = 0; i < switches.length; i++) {
+              let j = switches[i].getAttribute("index");
+              let maxCount = arrProducts[j].count;
+              let count = switches[i].getAttribute("count");
+              //console.log(count, maxCount , arrProducts[j],j,i)
+              if (count == maxCount) {
+                toTrash.push(i)
+              } else if (count !== 0) {
+                let newCount = maxCount - count;
+                arrProducts[j].count = newCount;
+                switches[i].setAttribute("count", newCount);
+                switches[i].parentNode.parentNode.children[2].innerHTML = newCount + " шт.";
+                switches[i].innerHTML = "";
+                switches[i].style.backgroundColor = "#0f9";
+                switches[i].setAttribute("select", "off");
+                switches[i].setAttribute("count", "0");
+              }
+            }
+            if(toTrash.length){
+              toTrash.reverse().forEach(i=>{
+                deleteProduct(i);
+                switches[i].closest('tr').fadeOut(900); 
+                setTimeout(function() {
+                  switches[i].closest('tr').remove(); 
+                }, 1000);
+              })
+              setTimeout(function(){
+                let trs = document.querySelectorAll('tbody tr');
+                Array.prototype.forEach.call(trs,(e,ind)=>{
+                    e.setAttribute('index',ind);
+                    e.querySelector('.switch').setAttribute('index',ind);
+                })
+              },1100)
+            }
+          }
+        }
+        function createButtonSaveChanges() {
+          let button = document.createElement("div");
+          button.className = "button";
+          button.innerHTML = "<p>Сохранить изменения</p>";
+          button.addEventListener("click", saveChanges);
+          return button;
+        }
+        createMenu();
+        createDivContainer();
+        setProduct("Яблоко", 2, 4);
+        setProduct("Куриные котлеты", 4, 6);
+        setProduct("Сыр", 6);
+        setProduct("Колбаса", 2);
+        setProduct("Бананы", 2, 6);
+        writeProducts();
+    </script>
+  </body>
+</html>
