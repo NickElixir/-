@@ -88,6 +88,13 @@
           section.appendChild(openNav);
           document.body.appendChild(section);
         }
+        function createAbout() {
+          let section = document.createElement("section");
+          section.className = "about"
+          section.innerHTML = "<h1>О сервисе</h1><p>Задача программы – автоматическая сортировка продуктов по сроку годности. В будущем будет реализованы рекомендации и список попупок</p><p>Автор – Nick Elixir</p>";
+          //section.hidden = true;
+          document.body.querySelector(".container").appendChild(section);
+        }
         function writeProducts() {
           let div = document.querySelector('.container'); 
           let section = document.createElement("section");
@@ -293,6 +300,7 @@
         setProduct("Колбаса", 2);
         setProduct("Бананы", 2, 6);
         writeProducts();
+        createAbout();
     </script>
   </body>
 </html>
