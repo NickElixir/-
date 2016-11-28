@@ -58,17 +58,6 @@
           div.className = "container";
           document.body.appendChild(div);
         }
-        function writeProducts() {
-          let div = document.querySelector('.container'); 
-          let section = document.createElement("section");
-          section.className = "main";
-          section.appendChild(createTableProducts(arrProducts));
-          section.appendChild(createButtonRationalChoice());
-          section.appendChild(createButtonRandomChoiceOfRationals());
-          section.appendChild(createButtonSaveChanges());
-          div.appendChild(section);
-        }
-
         function createMenu() {
           let section = document.createElement("section");
           section.className = "menu";
@@ -98,6 +87,16 @@
           openNav.appendChild(icon);
           section.appendChild(openNav);
           document.body.appendChild(section);
+        }
+        function writeProducts() {
+          let div = document.querySelector('.container'); 
+          let section = document.createElement("section");
+          section.className = "main";
+          section.appendChild(createTableProducts(arrProducts));
+          section.appendChild(createButtonRationalChoice());
+          section.appendChild(createButtonRandomChoiceOfRationals());
+          section.appendChild(createButtonSaveChanges());
+          div.appendChild(section);
         }
         function updateShelfLifes() {
           nowDay = new Date();
