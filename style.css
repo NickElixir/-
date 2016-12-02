@@ -7,6 +7,7 @@
     .container {
         width: 100%;
         font-size: 18px;
+            background-color: #00e700;
     }
     .button {
         font-size: 1.4em;
@@ -201,8 +202,14 @@ nav ul li:hover {
   cursor: pointer;
   color: white;
 }
+.visible {
+    display: block;
+}
+.invisible {
+    display: none;
+}
 @media (max-width: 425px) {
-    .about {
+    #about {
         padding: 1em;
     }
 }

@@ -58,6 +58,12 @@
           div.className = "container";
           document.body.appendChild(div);
         }
+        function selectSection(event) {
+          if (document.body.querySelector(".visible")) {
+            document.body.querySelector(".visible").className = "invisible";
+            document.body.querySelector("#" + event.target.getAttribute("key")).className = "visible";
+          }
+        }
         function createMenu() {
           let section = document.createElement("section");
           section.className = "menu";
@@ -65,9 +71,13 @@
           let ul = document.createElement("ul");
           let main = document.createElement("li");
           main.innerHTML = "Главная";
+          main.setAttribute("key", "main");
+          main.addEventListener("click", selectSection);
           ul.appendChild(main);
           let about = document.createElement("li");
           about.innerHTML = "О сервисе";
+          about.setAttribute("key", "about");
+          about.addEventListener("click", selectSection);
           ul.appendChild(about);
           nav.appendChild(ul);
           section.appendChild(nav);
@@ -90,15 +100,16 @@
         }
         function createAbout() {
           let section = document.createElement("section");
-          section.className = "about"
+          section.setAttribute("id", "about");
           section.innerHTML = "<h1>О сервисе</h1><p>Задача программы – автоматическая сортировка продуктов по сроку годности. В будущем будет реализованы рекомендации и список попупок</p><p>Автор – Nick Elixir</p>";
-          //section.hidden = true;
+          section.className = "invisible";
           document.body.querySelector(".container").appendChild(section);
         }
         function writeProducts() {
           let div = document.querySelector('.container'); 
           let section = document.createElement("section");
-          section.className = "main";
+          section.setAttribute("id", "main");
+          section.className = "visible";
           section.appendChild(createTableProducts(arrProducts));
           section.appendChild(createButtonRationalChoice());
           section.appendChild(createButtonRandomChoiceOfRationals());
