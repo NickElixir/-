@@ -281,10 +281,10 @@
             if(toTrash.length){
               toTrash.reverse().forEach(i=>{
                 deleteProduct(i);
-                switches[i].closest('tr').fadeOut(900); 
+                switches[i].closest('tr').fadeOut(500); 
                 setTimeout(function() {
                   switches[i].closest('tr').remove(); 
-                }, 1000);
+                }, 600);
               })
               setTimeout(function(){
                 let trs = document.querySelectorAll('tbody tr');
