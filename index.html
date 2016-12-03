@@ -98,24 +98,6 @@
           section.appendChild(openNav);
           document.body.appendChild(section);
         }
-        function createAbout() {
-          let section = document.createElement("section");
-          section.setAttribute("id", "about");
-          section.innerHTML = "<h1>О сервисе</h1><p>Задача программы – автоматическая сортировка продуктов по сроку годности. В будущем будет реализованы рекомендации и список попупок</p><p>Автор – Nick Elixir</p>";
-          section.className = "invisible";
-          document.body.querySelector(".container").appendChild(section);
-        }
-        function writeProducts() {
-          let div = document.querySelector('.container'); 
-          let section = document.createElement("section");
-          section.setAttribute("id", "main");
-          section.className = "visible";
-          section.appendChild(createTableProducts(arrProducts));
-          section.appendChild(createButtonRationalChoice());
-          section.appendChild(createButtonRandomChoiceOfRationals());
-          section.appendChild(createButtonSaveChanges());
-          div.appendChild(section);
-        }
         function updateShelfLifes() {
           nowDay = new Date();
           for(let i = 0; i < arrProducts.length; i++) {
@@ -217,7 +199,7 @@
         function createButtonRandomChoiceOfRationals() {
           let button = document.createElement('div');
           button.className = "button";
-          button.innerHTML = "<p>Случайный выбор</p>";
+          button.innerHTML = "<p>Случайная подсказка</p>";
           button.setAttribute("id", "random-choice");
           button.addEventListener("click", randomChoiceOfRationals);
           button.hidden = true;
@@ -302,6 +284,24 @@
           button.innerHTML = "<p>Сохранить изменения</p>";
           button.addEventListener("click", saveChanges);
           return button;
+        }
+        function createAbout() {
+          let section = document.createElement("section");
+          section.setAttribute("id", "about");
+          section.innerHTML = "<h1>О сервисе</h1><p>Задача программы – автоматическая сортировка продуктов по сроку годности. В будущем будет реализованы рекомендации и список попупок</p><p>Автор – Nick Elixir</p>";
+          section.className = "invisible";
+          document.body.querySelector(".container").appendChild(section);
+        }
+        function writeProducts() {
+          let div = document.querySelector('.container'); 
+          let section = document.createElement("section");
+          section.setAttribute("id", "main");
+          section.className = "visible";
+          section.appendChild(createTableProducts(arrProducts));
+          section.appendChild(createButtonRationalChoice());
+          section.appendChild(createButtonRandomChoiceOfRationals());
+          section.appendChild(createButtonSaveChanges());
+          div.appendChild(section);
         }
         createMenu();
         createDivContainer();
