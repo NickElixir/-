@@ -100,16 +100,21 @@ body {
 .switch {
     background-color: #0F9;
     border: 0.2em solid #fff;
-    width: 1.2em;
-    height: 1.2em;
+    width: 1.6em;
+    height: 1.6em;
     -webkit-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
     -moz-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
 .switch p {
     text-align: center;
-    margin: 3px 0;
-    font-size: 1.2em;
+    font-size: 1.5em;
+    margin: -3px;
+}
+@media (max-width: 425px) {
+    .switch p {
+        margin: -4px;
+    }
 }
 #random-choice {
     margin: 0 10%;
