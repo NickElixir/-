@@ -16,10 +16,12 @@
         </fieldset>
     </form>
     <script>
-        let arrProductsCollection = [];
-        function createProduct() {
+        var arrProductsCollection = [];
+        function createProduct(event) {
+            event.preventDefault();
+            var value = document.forms[0].elements.name1.value;
             arrProductsCollection.push(document.forms[0].elements.name1.value);
-            alert(arrProductsCollection);
+            console.log(arrProductsCollection);
         }
         document.forms[0].addEventListener("submit", createProduct);
     </script>
