@@ -74,6 +74,11 @@
           main.setAttribute("key", "main");
           main.addEventListener("click", selectSection);
           ul.appendChild(main);
+          let form = document.createElement("li");
+          form.innerHTML = "Добавить продукт";
+          form.setAttribute("key", "form");
+          form.addEventListener("click", selectSection);
+          ul.appendChild(form);
           let about = document.createElement("li");
           about.innerHTML = "О сервисе";
           about.setAttribute("key", "about");
@@ -97,6 +102,45 @@
           openNav.appendChild(icon);
           section.appendChild(openNav);
           document.body.appendChild(section);
+        }
+        function createFirstFieldset() {
+          let fieldset = document.createElement("fieldset");
+          fieldset.setAttribute("name", "createProduct");
+          let legend = document.createElement("legend");
+          legend.innerHTML = "<h1>Добавить новый продукт в коллекцию</h1>";
+          fieldset.appendChild(legend);
+          let h2 = document.createElement("h2");
+          h2.innerHTML = "Имя продукта (вид + род)";
+          fieldset.appendChild(h2);
+          input1 = document.createElement("input");
+          input1.setAttribute("name", "name1");
+          fieldset.appendChild(input1);
+          fieldset.appendChild(document.createElement("br"));
+          let input2 = document.createElement("input");
+          input2.setAttribute("type", "submit");
+          input2.setAttribute("name", "submit1");
+          fieldset.appendChild(input2);
+          fieldset.appendChild(document.createElement("br"));
+          return fieldset;
+        }
+        function createSecondFieldset() {
+          let fieldset = document.createElement("fieldset");
+          let legend = document.createElement("legend");
+          legend.innerHTML = "<h1>Добавить продукт</h1>";
+          fieldset.appendChild(legend);
+          return fieldset;
+        }
+        function createFormProduct() {
+          let section = document.createElement("section");
+          section.setAttribute("id", "form");
+          let form = document.createElement("form");
+          let fieldset1 = createFirstFieldset();
+          form.appendChild(fieldset1);
+          let fieldset2 = createSecondFieldset();
+          form.appendChild(fieldset2);
+          section.appendChild(form);
+          section.className = "invisible";
+          document.body.querySelector(".container").appendChild(section);
         }
         function updateShelfLifes() {
           nowDay = new Date();
@@ -311,6 +355,7 @@
         setProduct("Колбаса", 2);
         setProduct("Бананы", 2, 6);
         writeProducts();
+        createFormProduct();
         createAbout();
     </script>
   </body>

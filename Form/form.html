@@ -3,17 +3,24 @@
     <meta charset=utf-8>
 </head>
 <body>
-    <form name=createProduct>
-        <p>Добавить новый продукт в коллекцию</p>
-        <p><input></p>
-        <p><input type=submit value=Добавить></p>
+    <form>
+        <fieldset name=createProduct>
+            <legend><h1>Добавить новый продукт в коллекцию</h1></legend>
+            <h2>Имя продукта (род + вид)</h2>
+            <p><input name=name1></p>
+            <p><input type=submit name=submit1></p>
+        </fieldset>
+        <fieldset>
+            <legend><h1>Добавить продукт</h1></legend>
+            <input>
+        </fieldset>
     </form>
-
     <script>
         let arrProductsCollection = [];
-        function alertValue() {
-            alert(document.forms.createProduct.elements[0].value);
+        function createProduct() {
+            arrProductsCollection.push(document.forms[0].elements.name1.value);
+            alert(arrProductsCollection);
         }
-        document.forms.createProduct.elements[1].addEventListener("click", alertValue);
+        document.forms[0].addEventListener("submit", createProduct);
     </script>
 </body>
