@@ -8,7 +8,7 @@
   <body>
     <script>
         let arrProducts = [];
-
+		let arrProductsCollection = [];
         function getRandomInt(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
@@ -103,9 +103,10 @@
           section.appendChild(openNav);
           document.body.appendChild(section);
         }
-        function createFirstFieldset() {
+        function createFirstForm() {
+		  let form = document.createElement("form");
+		  form.setAttribute("name", "createProduct");
           let fieldset = document.createElement("fieldset");
-          fieldset.setAttribute("name", "createProduct");
           let legend = document.createElement("legend");
           legend.innerHTML = "<h1>Добавить новый продукт в коллекцию</h1>";
           fieldset.appendChild(legend);
@@ -121,22 +122,29 @@
           input2.setAttribute("name", "submit1");
           fieldset.appendChild(input2);
           fieldset.appendChild(document.createElement("br"));
-          return fieldset;
+		  form.appendChild(fieldset);
+          return form;
         }
-        function createSecondFieldset() {
+        function createSecondForm() {
+		  let form = document.createElement("form");
+		  form.setAttribute("name", "addProduct");
           let fieldset = document.createElement("fieldset");
           let legend = document.createElement("legend");
           legend.innerHTML = "<h1>Добавить продукт</h1>";
           fieldset.appendChild(legend);
-          return fieldset;
+		  let select = document.createElement("select");
+		  select.setAttribute("name", "selectProduct");
+		  for (let i = 0; i < arrProductsCollection.length;
+		  form.appendChild(fieldset);
+          return form;
         }
-        function createFormProduct() {
+        function createSectionFormProduct() {
           let section = document.createElement("section");
           section.setAttribute("id", "form");
           let form = document.createElement("form");
-          let fieldset1 = createFirstFieldset();
+          let fieldset1 = createFirstForm();
           form.appendChild(fieldset1);
-          let fieldset2 = createSecondFieldset();
+          let fieldset2 = createSecondForm();
           form.appendChild(fieldset2);
           section.appendChild(form);
           section.className = "invisible";
