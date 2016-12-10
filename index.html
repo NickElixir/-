@@ -8,7 +8,7 @@
   <body>
     <script>
         let arrProducts = [];
-		let arrProductsCollection = [];
+		    let arrProductsCollection = ["Бананы", "Яблоки", "Апельсины"];
         function getRandomInt(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
@@ -30,14 +30,14 @@
           }
         }
         Element.prototype.fadeOut = fadeOut;        
-        function setProduct (name, shelfLife, count) {
+        function setProduct (name, shelflife, count) {
             try {
               if (arguments.length < 2) {
                 throw new Error("Объект продукта не заполнен полностью");
               }
               let object = new Object();
               object.name = name;
-              object.shelfLife = shelfLife;
+              object.shelflife = shelflife;
               if (count) {
                 object.count = count;
               } else {
@@ -108,10 +108,10 @@
 		  form.setAttribute("name", "createProduct");
           let fieldset = document.createElement("fieldset");
           let legend = document.createElement("legend");
-          legend.innerHTML = "<h1>Добавить новый продукт в коллекцию</h1>";
+          legend.innerHTML = "<h2>Добавить новый продукт в коллекцию</h2>";
           fieldset.appendChild(legend);
-          let h2 = document.createElement("h2");
-          h2.innerHTML = "Имя продукта (вид + род)";
+          let h2 = document.createElement("h3");
+          h2.innerHTML = "Имя продукта (род и вид)";
           fieldset.appendChild(h2);
           input1 = document.createElement("input");
           input1.setAttribute("name", "name1");
@@ -122,41 +122,76 @@
           input2.setAttribute("name", "submit1");
           fieldset.appendChild(input2);
           fieldset.appendChild(document.createElement("br"));
-		  form.appendChild(fieldset);
+		      form.appendChild(fieldset);
+          form.addEventListener("submit", createProduct);
           return form;
         }
         function createSecondForm() {
-		  let form = document.createElement("form");
-		  form.setAttribute("name", "addProduct");
+          let form = document.createElement("form");
+          form.setAttribute("name", "addProduct");
           let fieldset = document.createElement("fieldset");
           let legend = document.createElement("legend");
-          legend.innerHTML = "<h1>Добавить продукт</h1>";
+          legend.innerHTML = "<h2>Добавить продукт</h2>";
           fieldset.appendChild(legend);
-		  let select = document.createElement("select");
-		  select.setAttribute("name", "selectProduct");
-		  for (let i = 0; i < arrProductsCollection.length;
-		  form.appendChild(fieldset);
+          let nameHeader = document.createElement("h3");
+          nameHeader.innerHTML = "Название (род и вид)";
+          fieldset.appendChild(nameHeader);
+          let select = document.createElement("select");
+          select.setAttribute("name", "nameProduct");
+          for (let i = 0; i < arrProductsCollection.length; i++) {
+            let option = new Option(arrProductsCollection[i], arrProductsCollection[i]);
+            select.appendChild(option);
+          }
+          fieldset.appendChild(select);
+          let shelflifeHeader = document.createElement("h3");
+          shelflifeHeader.innerHTML = "Срок годности";
+          fieldset.appendChild(shelflifeHeader);
+          let shelflife = document.createElement("input");
+          shelflife.setAttribute("name", "shelflife");
+          fieldset.appendChild(shelflife);
+          let countHeader = document.createElement("h3");
+          countHeader.innerHTML = "Количество";
+          fieldset.appendChild(countHeader);
+          let count = document.createElement("input");
+          count.setAttribute("name", "count");
+          fieldset.appendChild(count);
+          form.appendChild(fieldset);
           return form;
         }
         function createSectionFormProduct() {
           let section = document.createElement("section");
           section.setAttribute("id", "form");
-          let form = document.createElement("form");
-          let fieldset1 = createFirstForm();
-          form.appendChild(fieldset1);
-          let fieldset2 = createSecondForm();
-          form.appendChild(fieldset2);
-          section.appendChild(form);
+          let form1 = createFirstForm();
+          section.appendChild(form1);
+          let form2 = createSecondForm();
+          section.appendChild(form2);
           section.className = "invisible";
           document.body.querySelector(".container").appendChild(section);
         }
-        function updateShelfLifes() {
+        function createProduct(event) {
+          event.preventDefault();
+          let value = document.forms[0].elements.name1.value;
+          let a = true;
+          for (let i = 0; i < arrProductsCollection.length; i++) {
+            if (arrProductsCollection[i].toUpperCase() == value.toUpperCase()) {
+              a = false;
+            }
+          }
+          if (a) {
+            arrProductsCollection.push(value);
+            console.log(arrProductsCollection);
+            let option = new Option(value, value);
+            console.log(document.forms[1].elements);
+            document.querySelector(" #form select").appendChild(option);
+          }
+        }
+        function updateshelflifes() {
           nowDay = new Date();
           for(let i = 0; i < arrProducts.length; i++) {
             let difference = nowDay - arrProducts[i].datePurchase;
             difference = new Date(difference);
             difference = difference.getDate();
-            arrProducts[i].shelfLife = arrProducts[i].shelfLife - difference;
+            arrProducts[i].shelflife = arrProducts[i].shelflife - difference;
           }
         }
         function createTableProducts(arr) {
@@ -182,7 +217,7 @@
             let td1 = document.createElement("td");
             td1.innerHTML = "<p>" + arr[i].name + "</p>";
             let td2 = document.createElement("td");
-            td2.innerHTML = "<p>" + arr[i].shelfLife + " дн.</p>";
+            td2.innerHTML = "<p>" + arr[i].shelflife + " дн.</p>";
             let td3 = document.createElement("td");
             td3.innerHTML = "<p>" + arr[i].count + "шт. </p>";
             let td4 = document.createElement("td");
@@ -200,23 +235,23 @@
           return table;
         }
         function rationalChoice() {
-          let arrMinShelfLife = [];
-          let minShelfLife = arrProducts[0].shelfLife;
+          let arrMinshelflife = [];
+          let minshelflife = arrProducts[0].shelflife;
           let alertString = "";
           for(let i = 0; i < arrProducts.length; i++) {
-              if (arrProducts[i].shelfLife < minShelfLife) {
-                  minShelfLife = arrProducts[i].shelfLife;
+              if (arrProducts[i].shelflife < minshelflife) {
+                  minshelflife = arrProducts[i].shelflife;
               }
           }
           for(let i = 0; i < arrProducts.length; i++) {
-              if(minShelfLife == arrProducts[i].shelfLife) {
-                  arrMinShelfLife.push(arrProducts[i]);
+              if(minshelflife == arrProducts[i].shelflife) {
+                  arrMinshelflife.push(arrProducts[i]);
               }
           }
           let rows = document.querySelectorAll('.arr-products tr');
-          for (let i = 0; i < arrMinShelfLife.length; i++) {
+          for (let i = 0; i < arrMinshelflife.length; i++) {
             for (let j = 0; j < rows.length; j++) {
-              if (rows[j].getAttribute('index') == arrMinShelfLife[i].index) {
+              if (rows[j].getAttribute('index') == arrMinshelflife[i].index) {
                 rows[j].className = 'lighted';
               }
             }
@@ -232,21 +267,21 @@
           return button;
         }
         function randomChoiceOfRationals() {
-          let arrMinShelfLife = [];
-          let minShelfLife = arrProducts[0].shelfLife;
+          let arrMinshelflife = [];
+          let minshelflife = arrProducts[0].shelflife;
           let alertString = "";
           for(let i = 0; i < arrProducts.length; i++) {
-              if (arrProducts[i].shelfLife < minShelfLife) {
-                  minShelfLife = arrProducts[i].shelfLife;
+              if (arrProducts[i].shelflife < minshelflife) {
+                  minshelflife = arrProducts[i].shelflife;
               }
           }
           for(let i = 0; i < arrProducts.length; i++) {
-              if(minShelfLife == arrProducts[i].shelfLife) {
-                  arrMinShelfLife.push(arrProducts[i]);
+              if(minshelflife == arrProducts[i].shelflife) {
+                  arrMinshelflife.push(arrProducts[i]);
               }
           }
-           i = getRandomInt(0, (arrMinShelfLife.length - 1));
-            alert(arrMinShelfLife[i].name + " - " + arrMinShelfLife[i].shelfLife + " дн. " + " - " + arrMinShelfLife[i].count + "шт.");
+           i = getRandomInt(0, (arrMinshelflife.length - 1));
+            alert(arrMinshelflife[i].name + " - " + arrMinshelflife[i].shelflife + " дн. " + " - " + arrMinshelflife[i].count + "шт.");
         }
         function createButtonRandomChoiceOfRationals() {
           let button = document.createElement('div');
@@ -363,7 +398,7 @@
         setProduct("Колбаса", 2);
         setProduct("Бананы", 2, 6);
         writeProducts();
-        createFormProduct();
+        createSectionFormProduct();
         createAbout();
     </script>
   </body>

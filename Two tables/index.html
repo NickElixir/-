@@ -11,14 +11,14 @@
         function getRandomInt(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
-        function setProduct (name, shelfLife, count) {
+        function setProduct (name, shelflife, count) {
             try {
               if (arguments.length < 2) {
                 throw new Error("Объект продукта не заполнен полностью");
               }
               var object = new Object();
               object.name = name;
-              object.shelfLife = shelfLife;
+              object.shelflife = shelflife;
               if (count) {
                 object.count = count;
               } else {
@@ -44,13 +44,13 @@
           div.appendChild(createTableProducts(arrProducts)); 
           div.appendChild(document.createElement('br'));
         }
-        function updateShelfLifes() {
+        function updateshelflifes() {
           nowDay = new Date();
           for(var i = 0; i < arrProducts.length; i++) {
             var difference = nowDay - arrProducts[i].datePurchase;
             difference = new Date(difference);
             difference = difference.getDate();
-            arrProducts[i].shelfLife = arrProducts[i].shelfLife - difference;
+            arrProducts[i].shelflife = arrProducts[i].shelflife - difference;
           }
         }
         function createTableProducts(arr) {
@@ -74,7 +74,7 @@
             let td1 = document.createElement("td");
             td1.innerHTML = "<p>" + arr[i].name + "</p>";
             let td2 = document.createElement("td");
-            td2.innerHTML = "<p>" + arr[i].shelfLife + " дн.</p>";
+            td2.innerHTML = "<p>" + arr[i].shelflife + " дн.</p>";
             let td3 = document.createElement("td");
             td3.innerHTML = "<p>" + arr[i].count + "шт. </p>";
             let td4 = document.createElement("td");
@@ -92,20 +92,20 @@
           return table;
         }
         function rationalChoice() {
-          var arrMinShelfLife = [];
-          var minShelfLife = arrProducts[0].shelfLife;
+          var arrMinshelflife = [];
+          var minshelflife = arrProducts[0].shelflife;
           var alertString = "";
           for(var i = 0; i < arrProducts.length; i++) {
-              if (arrProducts[i].shelfLife < minShelfLife) {
-                  minShelfLife = arrProducts[i].shelfLife;
+              if (arrProducts[i].shelflife < minshelflife) {
+                  minshelflife = arrProducts[i].shelflife;
               }
           }
           for(i = 0; i < arrProducts.length; i++) {
-              if(minShelfLife == arrProducts[i].shelfLife) {
-                  arrMinShelfLife.push(arrProducts[i]);
+              if(minshelflife == arrProducts[i].shelflife) {
+                  arrMinshelflife.push(arrProducts[i]);
               }
           }
-          let table = createTableProducts(arrMinShelfLife);
+          let table = createTableProducts(arrMinshelflife);
           let div = document.createElement("div");
           div.className = "rational-choice";
           div.appendChild(table);
@@ -113,12 +113,12 @@
           button.innerHTML = "<p>Случайный выбор</p>";
           button.className = "button";
           button.addEventListener("click", function(){
-            i = getRandomInt(0, (arrMinShelfLife.length - 1));
-            alert(arrMinShelfLife[i].name + " - " + arrMinShelfLife[i].shelfLife + " дн. ");
+            i = getRandomInt(0, (arrMinshelflife.length - 1));
+            alert(arrMinshelflife[i].name + " - " + arrMinshelflife[i].shelflife + " дн. ");
           });
           div.appendChild(document.createElement('br'));
           div.appendChild(button);
-          div.setAttribute("id", "min-shelfLife");
+          div.setAttribute("id", "min-shelflife");
           div.hidden = true;
           return div;
         }
@@ -127,7 +127,7 @@
           buttonRationalChoice.className = "button";
           buttonRationalChoice.innerHTML = "<p>Рациональный выбор</p>";
           buttonRationalChoice.addEventListener("click", function(){
-            div = document.getElementById("min-shelfLife");
+            div = document.getElementById("min-shelflife");
             div.hidden = !div.hidden;
           });
           let div = document.querySelector('.container');

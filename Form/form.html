@@ -14,7 +14,7 @@
 	<form>
         <fieldset name=addProduct>
             <legend><h1>Добавить продукт</h1></legend>
-            <select name=collectionProducts>
+            <select name=nameProducts>
 			</select>
 			<p><input name=shelflife></p>
 			<p><input name=count></p>
@@ -22,22 +22,22 @@
         </fieldset>
     </form>
     <script>
-		var arrProducts = [];
-        var arrProductsCollection = [];
+		let arrProducts = [];
+        let arrProductsCollection = [];
         function createProduct(event) {
             event.preventDefault();
-            var value = document.forms[0].elements.name1.value;
+            let value = document.forms[0].elements.name1.value;
             arrProductsCollection.push(document.forms[0].elements.name1.value);
             console.log(arrProductsCollection);
-			var option = new Option(value, value);
-			document.forms[1].elements.collectionProducts.appendChild(option);
+			let option = new Option(value, value);
+			document.forms[1].elements.nameProducts.appendChild(option);
         }
         document.forms[0].addEventListener("submit", createProduct);
 		function addProduct(event) {
 			event.preventDefault();
-			var name = document.forms[1].elements.collectionProducts.value;
-			var shelflife = document.forms[1].elements.shelflife.value;
-			var count = document.forms[1].elements.count.value;
+			let name = document.forms[1].elements.nameProducts.value;
+			let shelflife = parseInt(document.forms[1].elements.shelflife.value);
+			let count = parseInt(document.forms[1].elements.count.value);
 
               let object = new Object();
               object.name = name;
