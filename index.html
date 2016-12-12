@@ -8,7 +8,7 @@
   <body>
     <script>
         let arrProducts = [];
-		    let arrProductsCollection = ["Бананы", "Яблоки", "Апельсины"];
+		let arrProductsCollection = ["Бананы", "Яблоки", "Апельсины"];
         function getRandomInt(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
@@ -117,10 +117,10 @@
           input1.setAttribute("name", "name1");
           fieldset.appendChild(input1);
           fieldset.appendChild(document.createElement("br"));
-          let input2 = document.createElement("input");
-          input2.setAttribute("type", "submit");
-          input2.setAttribute("name", "submit1");
-          fieldset.appendChild(input2);
+          let submit = document.createElement("input");
+          submit.setAttribute("type", "submit");
+          submit.setAttribute("name", "submit1");
+          fieldset.appendChild(submit);
           fieldset.appendChild(document.createElement("br"));
 		      form.appendChild(fieldset);
           form.addEventListener("submit", createProduct);
@@ -155,7 +155,13 @@
           let count = document.createElement("input");
           count.setAttribute("name", "count");
           fieldset.appendChild(count);
+		  fieldset.appendChild(document.createElement("br"));
+		  let submit = document.createElement("input");
+		  submit.setAttribute("type", "submit");
+          submit.setAttribute("name", "submit1");
+		  fieldset.appendChild(submit);
           form.appendChild(fieldset);
+		  form.addEventListener("submit", addProduct);
           return form;
         }
         function createSectionFormProduct() {
@@ -171,20 +177,68 @@
         function createProduct(event) {
           event.preventDefault();
           let value = document.forms[0].elements.name1.value;
+		  if (!value) {
+			alert("Не указано название продукта");
+			return;
+		  }
+		  value = value.toUpperCase();
           let a = true;
           for (let i = 0; i < arrProductsCollection.length; i++) {
-            if (arrProductsCollection[i].toUpperCase() == value.toUpperCase()) {
+            if (arrProductsCollection[i].toUpperCase() == value) {
               a = false;
             }
           }
           if (a) {
             arrProductsCollection.push(value);
+			arrProductsCollection.sort();
             console.log(arrProductsCollection);
-            let option = new Option(value, value);
-            console.log(document.forms[1].elements);
-            document.querySelector(" #form select").appendChild(option);
+            let select = document.querySelector(" #form select");
+			select.innerHTML = "";
+			for (let i = 0; i < arrProductsCollection.length; i++) {
+				let option = new Option(arrProductsCollection[i], arrProductsCollection[i]);
+				select.appendChild(option);
+			}
           }
         }
+	function addProduct(event) {
+	  event.preventDefault();
+	  console.log(document.forms[1]);
+	  let name = document.forms[1].elements.nameProduct.value;
+	  let shelflife = parseInt(document.forms[1].elements.shelflife.value);
+	  let count = parseInt(document.forms[1].elements.count.value);
+	  if (count < 1) {
+		alert("Количество не может быть меньше 1шт.");
+		return;
+	  }
+	  let object = new Object();
+	  object.name = name;
+	  object.shelflife = shelflife;
+	  if (count) {
+		object.count = count;
+	  } else {
+		object.count = 1;
+	  }
+	  object.datePurchase = new Date();
+	  object.index = arrProducts.length;
+	  arrProducts.push(object);
+	  console.log(arrProducts);
+	  let tr = document.createElement("tr");
+	  tr.setAttribute("index", arrProducts.length - 1);
+	  let td1 = document.createElement("td");
+	  td1.innerHTML = "<p>" + name + "</p>";
+	  tr.appendChild(td1);
+	  let td2 = document.createElement("td");
+	  td2.innerHTML = "<p>" + shelflife + " дн.</p>";
+	  tr.appendChild(td2);
+	  let td3 = document.createElement("td");
+	  td3.innerHTML = "<p>" + count + " шт.</p>";
+	  tr.appendChild(td3);
+	  let td4 = document.createElement("td");
+	  td4.innerHTML = "<div class='switch' select='off' index='" + (arrProducts.length - 1) + "' count='0'></div>";
+	  td4.style.padding = "0.5em";
+	  tr.appendChild(td4);
+	  document.querySelector(".arr-products tbody").appendChild(tr);
+	}
         function updateshelflifes() {
           nowDay = new Date();
           for(let i = 0; i < arrProducts.length; i++) {
