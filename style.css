@@ -42,6 +42,9 @@ body {
     font-family: Roboto, Arial, sans-serif;
     line-height: 1.5em;
     color: #fff;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-transform: uppercase;
 }
 @media (max-width: 425px) {
     body {
@@ -123,7 +126,7 @@ body {
 .navOpen {
   overflow: hidden;
 }
-@media (max-width: 425px) {
+@media (max-width: 768px) {
     .openNav {
     transition-duration: 0.5s;
     transition-timing-function: swing;
@@ -217,4 +220,85 @@ nav ul li:hover {
     #about {
         padding: 1em;
     }
+}
+input {
+    display: block;
+    background-color: transparent;
+    color: rgba(0,0,0,.87);
+    border: none;
+    border-bottom: 1px solid rgba(0,0,0,.26);
+    outline: 0;
+    width: 100%;
+    height: 1.6em;
+    font-size: 1em;
+}
+legend {
+    display: block;
+    width: 100%;
+    padding: 0;
+    margin-bottom: 10px;
+}
+form {
+    padding: 0.75em;
+    margin-bottom: 1em;
+    border-radius: 0;
+    background-color: #FFF;
+    color: #000;
+    -webkit-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    -moz-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+.note {
+    text-align: center;
+    cursor: pointer;
+}
+.mui-textfield {
+    display: block;
+    padding-top: 0.75em;
+    margin-bottom: 1em;
+    position: relative;
+}
+.mui-btn {
+    background-color: #FFF;
+    transition: all .2s ease-in-out;
+    display: inline-block;
+    border: none;
+    cursor: pointer;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    background-image: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    width: 100%;
+    height: 1.5em;
+    margin: 0.8em 0;
+    border-radius: 2px;
+    -webkit-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    -moz-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    font-size: 1em;
+}
+.mui-select {
+    display: block;
+    height: 1.5em;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    outline: 0;
+    border: none;
+    border-bottom: 1px solid rgba(0,0,0,.26);
+    border-radius: 0;
+    box-shadow: none;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: right center;
+    cursor: pointer;
+    color: rgba(0,0,0,.87);
+    font-size: 1em;
+    padding: 0 1em 0 0;
 }

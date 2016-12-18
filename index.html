@@ -8,11 +8,10 @@
   <body>
     <script>
         let arrProducts = [];
-		let arrProductsCollection = ["Бананы", "Яблоки", "Апельсины"];
+		    let arrProductsCollection = ["Бананы", "Яблоки", "Апельсины"];
         function getRandomInt(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
-
         function fadeOut(time){ 
         let EndTime = Date.now() + time;
         let _this = this;
@@ -31,24 +30,24 @@
         }
         Element.prototype.fadeOut = fadeOut;        
         function setProduct (name, shelflife, count) {
-            try {
-              if (arguments.length < 2) {
-                throw new Error("Объект продукта не заполнен полностью");
-              }
-              let object = new Object();
-              object.name = name;
-              object.shelflife = shelflife;
-              if (count) {
-                object.count = count;
-              } else {
-                object.count = 1;
-              }
-              object.datePurchase = new Date();
-              object.index = arrProducts.length;
-              arrProducts.push(object);
-            } catch (e) {
-              alert("Извините, в данных ошибка. Таблица будет не полной.");
+          try {
+            if (arguments.length < 2) {
+              throw new Error("Объект продукта не заполнен полностью");
             }
+            let object = new Object();
+            object.name = name;
+            object.shelflife = shelflife;
+            if (count) {
+              object.count = count;
+            } else {
+              object.count = 1;
+            }
+            object.datePurchase = new Date();
+            object.index = arrProducts.length;
+            arrProducts.push(object);
+          } catch (e) {
+            alert("Извините, в данных ошибка. Таблица будет не полной.");
+          }
         }
         function deleteProduct(index){
           arrProducts.splice(index, 1);
@@ -103,65 +102,85 @@
           section.appendChild(openNav);
           document.body.appendChild(section);
         }
+        function showComment(event) {
+          let target = event.target;
+          while (target.className !== "note") {
+            target = target.parentNode;
+          }
+          target.children[0].hidden = !target.children[0].hidden;
+        }
         function createFirstForm() {
-		  let form = document.createElement("form");
-		  form.setAttribute("name", "createProduct");
-          let fieldset = document.createElement("fieldset");
+          let form = document.createElement("form");
+          form.setAttribute("name", "createProduct");
           let legend = document.createElement("legend");
-          legend.innerHTML = "<h2>Добавить новый продукт в коллекцию</h2>";
-          fieldset.appendChild(legend);
-          let h2 = document.createElement("h3");
-          h2.innerHTML = "Имя продукта (род и вид)";
-          fieldset.appendChild(h2);
-          input1 = document.createElement("input");
-          input1.setAttribute("name", "name1");
-          fieldset.appendChild(input1);
-          fieldset.appendChild(document.createElement("br"));
-          let submit = document.createElement("input");
+          legend.innerHTML = "Добавить новый продукт в коллекцию";
+          form.appendChild(legend);
+          let div = document.createElement("div");
+          div.className = "mui-textfield mui-textfield--float-label";
+          input = document.createElement("input");
+          input.setAttribute("name", "name1");
+          div.appendChild(input);
+          let label = document.createElement("label");
+          label.innerHTML = "Название продукта";
+          div.appendChild(label);
+          form.appendChild(div);
+          let button = document.createElement("span");
+          button.className = "note";
+          button.innerHTML = "Примечание";
+          let comment = document.createElement("div");
+          comment.innerHTML = "<p>Лучше указать запись вида: род + вид. Желательно использовать множественное число.</p>";
+          comment.hidden = true;
+          button.appendChild(comment);
+          button.addEventListener("click", showComment);
+          form.appendChild(button);
+          let submit = document.createElement("button");
           submit.setAttribute("type", "submit");
           submit.setAttribute("name", "submit1");
-          fieldset.appendChild(submit);
-          fieldset.appendChild(document.createElement("br"));
-		      form.appendChild(fieldset);
+          submit.className = "mui-btn";
+          submit.innerHTML = "Отправить";
+          form.appendChild(submit);
+          form.appendChild(document.createElement("br"));
           form.addEventListener("submit", createProduct);
           return form;
         }
         function createSecondForm() {
           let form = document.createElement("form");
           form.setAttribute("name", "addProduct");
-          let fieldset = document.createElement("fieldset");
           let legend = document.createElement("legend");
-          legend.innerHTML = "<h2>Добавить продукт</h2>";
-          fieldset.appendChild(legend);
-          let nameHeader = document.createElement("h3");
-          nameHeader.innerHTML = "Название (род и вид)";
-          fieldset.appendChild(nameHeader);
+          legend.innerHTML = "Добавить продукт";
+          form.appendChild(legend);
+          let label = document.createElement("label");
+          label.innerHTML = "Название продукта";
+          form.appendChild(label);
+          form.appendChild(document.createElement("br"));
           let select = document.createElement("select");
           select.setAttribute("name", "nameProduct");
+          select.className = "mui-select";
           for (let i = 0; i < arrProductsCollection.length; i++) {
             let option = new Option(arrProductsCollection[i], arrProductsCollection[i]);
             select.appendChild(option);
           }
-          fieldset.appendChild(select);
-          let shelflifeHeader = document.createElement("h3");
-          shelflifeHeader.innerHTML = "Срок годности";
-          fieldset.appendChild(shelflifeHeader);
+          form.appendChild(select);
+          form.appendChild(document.createElement("br"));
+          label = document.createElement("label");
+          label.innerHTML = "Текущий срок годности";
+          form.appendChild(label);
           let shelflife = document.createElement("input");
           shelflife.setAttribute("name", "shelflife");
-          fieldset.appendChild(shelflife);
-          let countHeader = document.createElement("h3");
-          countHeader.innerHTML = "Количество";
-          fieldset.appendChild(countHeader);
+          form.appendChild(shelflife);
+          label = document.createElement("label");
+          label.innerHTML = "Количество";
+          form.appendChild(label);
           let count = document.createElement("input");
           count.setAttribute("name", "count");
-          fieldset.appendChild(count);
-		  fieldset.appendChild(document.createElement("br"));
-		  let submit = document.createElement("input");
-		  submit.setAttribute("type", "submit");
+          form.appendChild(count);
+          let submit = document.createElement("input");
+          submit.setAttribute("type", "submit");
           submit.setAttribute("name", "submit1");
-		  fieldset.appendChild(submit);
-          form.appendChild(fieldset);
-		  form.addEventListener("submit", addProduct);
+          submit.className = "mui-btn";
+          submit.innerHTML = "Отправить";
+          form.appendChild(submit);
+          form.addEventListener("submit", addProduct);
           return form;
         }
         function createSectionFormProduct() {
@@ -177,11 +196,11 @@
         function createProduct(event) {
           event.preventDefault();
           let value = document.forms[0].elements.name1.value;
-		  if (!value) {
-			alert("Не указано название продукта");
-			return;
-		  }
-		  value = value.toUpperCase();
+          if (!value) {
+            alert("Не указано название продукта");
+            return;
+          }
+          value = value.toUpperCase();
           let a = true;
           for (let i = 0; i < arrProductsCollection.length; i++) {
             if (arrProductsCollection[i].toUpperCase() == value) {
@@ -190,55 +209,55 @@
           }
           if (a) {
             arrProductsCollection.push(value);
-			arrProductsCollection.sort();
+            arrProductsCollection.sort();
             console.log(arrProductsCollection);
             let select = document.querySelector(" #form select");
-			select.innerHTML = "";
-			for (let i = 0; i < arrProductsCollection.length; i++) {
-				let option = new Option(arrProductsCollection[i], arrProductsCollection[i]);
-				select.appendChild(option);
-			}
+            select.innerHTML = "";
+            for (let i = 0; i < arrProductsCollection.length; i++) {
+              let option = new Option(arrProductsCollection[i], arrProductsCollection[i]);
+              select.appendChild(option);
+            }
           }
         }
-	function addProduct(event) {
-	  event.preventDefault();
-	  console.log(document.forms[1]);
-	  let name = document.forms[1].elements.nameProduct.value;
-	  let shelflife = parseInt(document.forms[1].elements.shelflife.value);
-	  let count = parseInt(document.forms[1].elements.count.value);
-	  if (count < 1) {
-		alert("Количество не может быть меньше 1шт.");
-		return;
-	  }
-	  let object = new Object();
-	  object.name = name;
-	  object.shelflife = shelflife;
-	  if (count) {
-		object.count = count;
-	  } else {
-		object.count = 1;
-	  }
-	  object.datePurchase = new Date();
-	  object.index = arrProducts.length;
-	  arrProducts.push(object);
-	  console.log(arrProducts);
-	  let tr = document.createElement("tr");
-	  tr.setAttribute("index", arrProducts.length - 1);
-	  let td1 = document.createElement("td");
-	  td1.innerHTML = "<p>" + name + "</p>";
-	  tr.appendChild(td1);
-	  let td2 = document.createElement("td");
-	  td2.innerHTML = "<p>" + shelflife + " дн.</p>";
-	  tr.appendChild(td2);
-	  let td3 = document.createElement("td");
-	  td3.innerHTML = "<p>" + count + " шт.</p>";
-	  tr.appendChild(td3);
-	  let td4 = document.createElement("td");
-	  td4.innerHTML = "<div class='switch' select='off' index='" + (arrProducts.length - 1) + "' count='0'></div>";
-	  td4.style.padding = "0.5em";
-	  tr.appendChild(td4);
-	  document.querySelector(".arr-products tbody").appendChild(tr);
-	}
+        function addProduct(event) {
+          event.preventDefault();
+          console.log(document.forms[1]);
+          let name = document.forms[1].elements.nameProduct.value;
+          let shelflife = parseInt(document.forms[1].elements.shelflife.value);
+          let count = parseInt(document.forms[1].elements.count.value);
+          if (count < 1) {
+            alert("Количество не может быть меньше 1шт.");
+            return;
+          }
+          let object = new Object();
+          object.name = name;
+          object.shelflife = shelflife;
+          if (count) {
+            object.count = count;
+          } else {
+            object.count = 1;
+          }
+          object.datePurchase = new Date();
+          object.index = arrProducts.length;
+          arrProducts.push(object);
+          console.log(arrProducts);
+          let tr = document.createElement("tr");
+          tr.setAttribute("index", arrProducts.length - 1);
+          let td1 = document.createElement("td");
+          td1.innerHTML = "<p>" + name + "</p>";
+          tr.appendChild(td1);
+          let td2 = document.createElement("td");
+          td2.innerHTML = "<p>" + shelflife + " дн.</p>";
+          tr.appendChild(td2);
+          let td3 = document.createElement("td");
+          td3.innerHTML = "<p>" + count + " шт.</p>";
+          tr.appendChild(td3);
+          let td4 = document.createElement("td");
+          td4.innerHTML = "<div class='switch' select='off' index='" + (arrProducts.length - 1) + "' count='0'></div>";
+          td4.style.padding = "0.5em";
+          tr.appendChild(td4);
+          document.querySelector(".arr-products tbody").appendChild(tr);
+        }
         function updateshelflifes() {
           nowDay = new Date();
           for(let i = 0; i < arrProducts.length; i++) {
