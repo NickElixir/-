@@ -16,7 +16,7 @@
             <legend><h1>Добавить продукт</h1></legend>
             <select name=nameProducts>
 			</select>
-			<p><input name=shelflife></p>
+			<p><input name=shelfLife></p>
 			<p><input name=count></p>
 			<p><input name=submit2 type=submit></p>
         </fieldset>
@@ -36,12 +36,12 @@
 		function addProduct(event) {
 			event.preventDefault();
 			let name = document.forms[1].elements.nameProducts.value;
-			let shelflife = parseInt(document.forms[1].elements.shelflife.value);
+			let shelfLife = parseInt(document.forms[1].elements.shelfLife.value);
 			let count = parseInt(document.forms[1].elements.count.value);
 
               let object = new Object();
               object.name = name;
-              object.shelflife = shelflife;
+              object.shelfLife = shelfLife;
               if (count) {
                 object.count = count;
               } else {

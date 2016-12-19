@@ -232,6 +232,10 @@ input {
     height: 1.6em;
     font-size: 1em;
 }
+input:focus {
+    border-color: #2196F3;
+    border-width: 2px;
+}
 legend {
     display: block;
     width: 100%;
@@ -251,6 +255,9 @@ form {
 .note {
     text-align: center;
     cursor: pointer;
+}
+.note:hover {
+    color: #2196F3;
 }
 .mui-textfield {
     display: block;

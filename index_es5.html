@@ -30,14 +30,14 @@ function fadeOut(time) {
   }
 }
 Element.prototype.fadeOut = fadeOut;
-function setProduct(name, shelflife, count) {
+function setProduct(name, shelfLife, count) {
   try {
     if (arguments.length < 2) {
       throw new Error("Объект продукта не заполнен полностью");
     }
     var object = new Object();
     object.name = name;
-    object.shelflife = shelflife;
+    object.shelfLife = shelfLife;
     if (count) {
       object.count = count;
     } else {
@@ -105,13 +105,13 @@ function writeProducts() {
   section.appendChild(createButtonSaveChanges());
   div.appendChild(section);
 }
-function updateshelflifes() {
+function updateshelfLifes() {
   nowDay = new Date();
   for (var _i = 0; _i < arrProducts.length; _i++) {
     var difference = nowDay - arrProducts[_i].datePurchase;
     difference = new Date(difference);
     difference = difference.getDate();
-    arrProducts[_i].shelflife = arrProducts[_i].shelflife - difference;
+    arrProducts[_i].shelfLife = arrProducts[_i].shelfLife - difference;
   }
 }
 function createTableProducts(arr) {
@@ -137,7 +137,7 @@ function createTableProducts(arr) {
     var td1 = document.createElement("td");
     td1.innerHTML = "<p>" + arr[_i2].name + "</p>";
     var td2 = document.createElement("td");
-    td2.innerHTML = "<p>" + arr[_i2].shelflife + " дн.</p>";
+    td2.innerHTML = "<p>" + arr[_i2].shelfLife + " дн.</p>";
     var td3 = document.createElement("td");
     td3.innerHTML = "<p>" + arr[_i2].count + "шт. </p>";
     var td4 = document.createElement("td");
@@ -155,23 +155,23 @@ function createTableProducts(arr) {
   return table;
 }
 function rationalChoice() {
-  var arrMinshelflife = [];
-  var minshelflife = arrProducts[0].shelflife;
+  var arrMinshelfLife = [];
+  var minshelfLife = arrProducts[0].shelfLife;
   var alertString = "";
   for (var _i3 = 0; _i3 < arrProducts.length; _i3++) {
-    if (arrProducts[_i3].shelflife < minshelflife) {
-      minshelflife = arrProducts[_i3].shelflife;
+    if (arrProducts[_i3].shelfLife < minshelfLife) {
+      minshelfLife = arrProducts[_i3].shelfLife;
     }
   }
   for (var _i4 = 0; _i4 < arrProducts.length; _i4++) {
-    if (minshelflife == arrProducts[_i4].shelflife) {
-      arrMinshelflife.push(arrProducts[_i4]);
+    if (minshelfLife == arrProducts[_i4].shelfLife) {
+      arrMinshelfLife.push(arrProducts[_i4]);
     }
   }
   var rows = document.querySelectorAll('.arr-products tr');
-  for (var _i5 = 0; _i5 < arrMinshelflife.length; _i5++) {
+  for (var _i5 = 0; _i5 < arrMinshelfLife.length; _i5++) {
     for (var j = 0; j < rows.length; j++) {
-      if (rows[j].getAttribute('index') == arrMinshelflife[_i5].index) {
+      if (rows[j].getAttribute('index') == arrMinshelfLife[_i5].index) {
         rows[j].className = 'lighted';
       }
     }
@@ -187,21 +187,21 @@ function createButtonRationalChoice() {
   return button;
 }
 function randomChoiceOfRationals() {
-  var arrMinshelflife = [];
-  var minshelflife = arrProducts[0].shelflife;
+  var arrMinshelfLife = [];
+  var minshelfLife = arrProducts[0].shelfLife;
   var alertString = "";
   for (var _i6 = 0; _i6 < arrProducts.length; _i6++) {
-    if (arrProducts[_i6].shelflife < minshelflife) {
-      minshelflife = arrProducts[_i6].shelflife;
+    if (arrProducts[_i6].shelfLife < minshelfLife) {
+      minshelfLife = arrProducts[_i6].shelfLife;
     }
   }
   for (var _i7 = 0; _i7 < arrProducts.length; _i7++) {
-    if (minshelflife == arrProducts[_i7].shelflife) {
-      arrMinshelflife.push(arrProducts[_i7]);
+    if (minshelfLife == arrProducts[_i7].shelfLife) {
+      arrMinshelfLife.push(arrProducts[_i7]);
     }
   }
-  i = getRandomInt(0, arrMinshelflife.length - 1);
-  alert(arrMinshelflife[i].name + " - " + arrMinshelflife[i].shelflife + " дн. " + " - " + arrMinshelflife[i].count + "шт.");
+  i = getRandomInt(0, arrMinshelfLife.length - 1);
+  alert(arrMinshelfLife[i].name + " - " + arrMinshelfLife[i].shelfLife + " дн. " + " - " + arrMinshelfLife[i].count + "шт.");
 }
 function createButtonRandomChoiceOfRationals() {
   var button = document.createElement('div');
