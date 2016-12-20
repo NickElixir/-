@@ -7,8 +7,13 @@
   </head>
   <body>
     <script>
-        let arrProducts = [];
-        let arrProductsCollection = [{name: "Бананы", shelfLife: 4}];
+        if (!localStorage.arrProducts || !localStorage.arrProductsCollection) {
+          var arrProducts = [];
+          var arrProductsCollection = [];
+        } else {
+          var arrProducts = localStorage.arrProducts ? JSON.parse(localStorage.arrProducts) : [];
+          var arrProductsCollection = localStorage.arrProductsCollection ? JSON.parse(localStorage.arrProductsCollection) : [];
+        }
         function getRandomInt(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
@@ -33,10 +38,6 @@
           return !isNaN(parseFloat(n)) && isFinite(n);
         }    
         function setProduct (name, shelfLife, count) {
-          try {
-            if (arguments.length < 2) {
-              throw new Error("Объект продукта не заполнен полностью");
-            }
             let object = new Object();
             object.name = name;
             object.shelfLife = shelfLife;
@@ -48,9 +49,6 @@
             object.datePurchase = new Date();
             object.index = arrProducts.length;
             arrProducts.push(object);
-          } catch (e) {
-            alert("Извините, в данных ошибка. Таблица будет не полной.");
-          }
         }
         function deleteProduct(index){
           arrProducts.splice(index, 1);
@@ -220,14 +218,16 @@
           form.appendChild(label);
           let shelfLife = document.createElement("input");
           shelfLife.setAttribute("name", "shelfLife");
-          let i = 0;
-          let selected = select.value;
-          let product = arrProductsCollection[i];
-          while (selected !== product.name) {
-            i++;
-            product = arrProductsCollection[i];
+          if (arrProductsCollection[0]) {
+            let i = 0
+            let selected = select.value;
+            let product = arrProductsCollection[i];
+            while (selected !== product.name) {
+              i++;
+              product = arrProductsCollection[i];
+            }
+            shelfLife.value = product.shelfLife;
           }
-          shelfLife.value = product.shelfLife;
           form.appendChild(shelfLife);
           label = document.createElement("label");
           label.innerHTML = "Количество";
@@ -275,6 +275,7 @@
             object.name = name;
             object.shelfLife = shelfLife;
             arrProductsCollection.push(object);
+            localStorage.arrProductsCollection = JSON.stringify(arrProductsCollection);
             sortProducts(arrProductsCollection, "name");
             let select = document.querySelector("#form select");
             select.innerHTML = "";
@@ -301,9 +302,9 @@
               i++;
               product = arrProducts[i];
             } else {
-
               if (product.shelfLife == shelfLife) {
                 product.count += count;
+                localStorage.arrProducts = JSON.stringify(arrProducts);
                 let tr = document.querySelectorAll(".arr-products tr");
                 tr[i].children[2].innerHTML = product.count + " шт.";
                 alert("Продукт успешкно добавлен");
@@ -319,6 +320,7 @@
           object.datePurchase = new Date();
           object.index = arrProducts.length;
           arrProducts.push(object);
+          localStorage.arrProducts = JSON.stringify(arrProducts);
           let tr = document.createElement("tr");
           tr.setAttribute("index", arrProducts.length - 1);
           let td1 = document.createElement("td");
@@ -515,6 +517,8 @@
                 })
               },1100)
             }
+          localStorage.arrProducts = JSON.stringify(arrProducts);
+          localStorage.arrProductsCollection = JSON.stringify(arrProductsCollection);
           }
         }
         function createButtonSaveChanges() {
@@ -544,11 +548,6 @@
         }
         createMenu();
         createDivContainer();
-        setProduct("Яблоко", 2, 4);
-        setProduct("Куриные котлеты", 4, 6);
-        setProduct("Сыр", 6);
-        setProduct("Колбаса", 2);
-        setProduct("Бананы", 2, 6);
         writeProducts();
         createSectionFormProduct();
         createAbout();
