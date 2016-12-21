@@ -318,6 +318,8 @@
           object.shelfLife = shelfLife;
           object.count = count;
           object.datePurchase = new Date();
+          object.datePurchase = object.datePurchase.getTime();
+          object.datePurchase = object.datePurchase - (object.datePurchase % 86400000);
           object.index = arrProducts.length;
           arrProducts.push(object);
           localStorage.arrProducts = JSON.stringify(arrProducts);
@@ -339,13 +341,27 @@
           document.querySelector(".arr-products tbody").appendChild(tr);
           alert("Продукт успешно добавлен");
         }
-        function updateshelfLifes() {
-          nowDay = new Date();
-          for(let i = 0; i < arrProducts.length; i++) {
-            let difference = nowDay - arrProducts[i].datePurchase;
-            difference = new Date(difference);
-            difference = difference.getDate();
-            arrProducts[i].shelfLife = arrProducts[i].shelfLife - difference;
+        function updateShelfLifes() {
+          if (!localStorage._checker) {
+            let time = new Date();
+            time = time.getTime();
+            time = time - (time % 86400000);
+            localStorage._checker = time;
+          } else {
+            let nowDay = new Date();
+            nowDay = nowDay.getTime();
+            nowDay = nowDay - (nowDay % 86400000);
+            console.log(localStorage._checker + " " + nowDay);
+            if (parseInt(localStorage._checker) !== nowDay) {
+              console.log(false);
+              for(let i = 0; i < arrProducts.length; i++) {
+                let difference = nowDay - arrProducts[i].datePurchase;
+                difference = difference/86400000;
+                arrProducts[i].shelfLife = arrProducts[i].shelfLife - difference;
+              }
+              localStorage.arrProducts = JSON.stringify(arrProducts);
+              localStorage._checker = nowDay;
+            }
           }
         }
         function createTableProducts(arr) {
@@ -546,6 +562,7 @@
           section.appendChild(createButtonSaveChanges());
           div.appendChild(section);
         }
+        updateShelfLifes();
         createMenu();
         createDivContainer();
         writeProducts();
