@@ -141,6 +141,11 @@
           }
           target.children[0].hidden = !target.children[0].hidden;
         }
+        function focusRadioParagraph(event) {
+          if (event.target.tagName == "P") {
+            event.target.children[0].checked = true;
+          }
+        }
         function createFirstForm() {
           let form = document.createElement("form");
           form.setAttribute("name", "createProduct");
@@ -154,6 +159,7 @@
           div.appendChild(label);
           let input = document.createElement("input");
           input.setAttribute("name", "name1");
+          input.type = "text";
           div.appendChild(input);
           form.appendChild(div);
           let button = document.createElement("span");
@@ -172,10 +178,11 @@
           div.appendChild(label);
           input = document.createElement("input");
           input.setAttribute("name", "defaultShelfLife");
+          input.type = "text";
           div.appendChild(input);
           form.appendChild(div);
           let submit = document.createElement("button");
-          submit.setAttribute("type", "submit");
+          submit.type = "submit";
           submit.setAttribute("name", "submit1");
           submit.className = "mui-btn";
           submit.innerHTML = "Отправить";
@@ -195,7 +202,7 @@
           form.appendChild(label);
           form.appendChild(document.createElement("br"));
           let select = document.createElement("select");
-          select.setAttribute("name", "nameProduct");
+          select.setAttribute("name", "name2");
           select.className = "mui-select";
           for (let i = 0; i < arrProductsCollection.length; i++) {
             let option = new Option(arrProductsCollection[i].name, arrProductsCollection[i].name);
@@ -218,6 +225,7 @@
           form.appendChild(label);
           let shelfLife = document.createElement("input");
           shelfLife.setAttribute("name", "shelfLife");
+          shelfLife.type = "text";
           if (arrProductsCollection[0]) {
             let i = 0
             let selected = select.value;
@@ -234,10 +242,45 @@
           form.appendChild(label);
           let count = document.createElement("input");
           count.setAttribute("name", "count");
+          count.type = "text";
           count.value = 1;
           form.appendChild(count);
+          label = document.createElement("label");
+          label.innerHTML = "Единица измерения";
+          form.appendChild(label);
+          let p = document.createElement("p");
+          p.className = "radio";
+          let radio = document.createElement("input");
+          radio.type = "radio";
+          radio.setAttribute("name", "countType");
+          radio.checked = true;
+          radio.value = "ШТ";
+          p.appendChild(radio);
+          p.appendChild(document.createTextNode("ШТ"));
+          p.addEventListener("click", focusRadioParagraph);
+          form.appendChild(p);
+          p = document.createElement("p");
+          p.className = "radio";
+          radio = document.createElement("input");
+          radio.type = "radio";
+          radio.setAttribute("name", "countType");
+          radio.value = "КГ";
+          p.appendChild(radio);
+          p.appendChild(document.createTextNode("КГ"));
+          p.addEventListener("click", focusRadioParagraph);
+          form.appendChild(p);
+          p = document.createElement("p");
+          p.className = "radio";
+          radio = document.createElement("input");
+          radio.type = "radio";
+          radio.setAttribute("name", "countType");
+          radio.value = "Г";
+          p.appendChild(radio);
+          p.appendChild(document.createTextNode("Г"));
+          p.addEventListener("click", focusRadioParagraph);
+          form.appendChild(p);
           let submit = document.createElement("input");
-          submit.setAttribute("type", "submit");
+          submit.type = "submit";
           submit.setAttribute("name", "submit1");
           submit.className = "mui-btn";
           submit.innerHTML = "Отправить";
@@ -288,13 +331,13 @@
         }
         function addProduct(event) {
           event.preventDefault();
-          let name = document.forms[1].elements.nameProduct.value;
-          let shelfLife = parseInt(document.forms[1].elements.shelfLife.value);
+          let name = document.forms[1].elements.name2.value;
           let count = parseInt(document.forms[1].elements.count.value);
           if (count < 1) {
             alert("Количество не может быть меньше 1шт.");
             return;
           }
+          let shelfLife = parseInt(document.forms[1].elements.shelfLife.value);
           let i = 0;
           let product = arrProducts[i];
           while (i < arrProducts.length) {
@@ -306,7 +349,7 @@
                 product.count += count;
                 localStorage.arrProducts = JSON.stringify(arrProducts);
                 let tr = document.querySelectorAll(".arr-products tr");
-                tr[i].children[2].innerHTML = product.count + " шт.";
+                tr[i].children[2].innerHTML = product.count + " " + product.countType;
                 alert("Продукт успешкно добавлен");
                 return;
               }
@@ -320,6 +363,7 @@
           object.datePurchase = new Date();
           object.datePurchase = object.datePurchase.getTime();
           object.datePurchase = object.datePurchase - (object.datePurchase % 86400000);
+          object.countType = document.forms[1].elements.countType.value;
           object.index = arrProducts.length;
           arrProducts.push(object);
           localStorage.arrProducts = JSON.stringify(arrProducts);
@@ -332,7 +376,7 @@
           td2.innerHTML = "<p>" + shelfLife + " дн.</p>";
           tr.appendChild(td2);
           let td3 = document.createElement("td");
-          td3.innerHTML = "<p>" + count + " шт.</p>";
+          td3.innerHTML = "<p>" + count + " "  + object.countType + "</p>";
           tr.appendChild(td3);
           let td4 = document.createElement("td");
           td4.innerHTML = "<div class='switch' select='off' index='" + (arrProducts.length - 1) + "' count='0'></div>";
@@ -343,25 +387,21 @@
         }
         function updateShelfLifes() {
           if (!localStorage._checker) {
-            let time = new Date();
-            time = time.getTime();
-            time = time - (time % 86400000);
-            localStorage._checker = time;
-          } else {
-            let nowDay = new Date();
-            nowDay = nowDay.getTime();
-            nowDay = nowDay - (nowDay % 86400000);
-            console.log(localStorage._checker + " " + nowDay);
-            if (parseInt(localStorage._checker) !== nowDay) {
-              console.log(false);
-              for(let i = 0; i < arrProducts.length; i++) {
-                let difference = nowDay - arrProducts[i].datePurchase;
-                difference = difference/86400000;
-                arrProducts[i].shelfLife = arrProducts[i].shelfLife - difference;
-              }
-              localStorage.arrProducts = JSON.stringify(arrProducts);
-              localStorage._checker = nowDay;
+            return;
+          }
+          let nowDay = new Date();
+          nowDay = nowDay.getTime();
+          nowDay = nowDay - (nowDay % 86400000);
+          console.log(localStorage._checker + " " + nowDay);
+          if (parseInt(localStorage._checker) !== nowDay) {
+            console.log(false);
+            for(let i = 0; i < arrProducts.length; i++) {
+              let difference = nowDay - arrProducts[i].datePurchase;
+              difference = difference/86400000;
+              arrProducts[i].shelfLife = arrProducts[i].shelfLife - difference;
             }
+            localStorage.arrProducts = JSON.stringify(arrProducts);
+            localStorage._checker = nowDay;
           }
         }
         function createTableProducts(arr) {
@@ -389,7 +429,7 @@
             let td2 = document.createElement("td");
             td2.innerHTML = "<p>" + arr[i].shelfLife + " дн.</p>";
             let td3 = document.createElement("td");
-            td3.innerHTML = "<p>" + arr[i].count + " шт. </p>";
+            td3.innerHTML = "<p>" + arr[i].count + " " + arr[i].countType + "</p>";
             let td4 = document.createElement("td");
             td4.innerHTML = "<div class='switch' select='off' index='" + arr[i].index + "' count='0'></div>";
             td4.style.padding = "0.5em";
@@ -497,6 +537,12 @@
         function saveChanges() {
           let confidence = confirm("Вы уверены, что хотите сохранить результат?");
           if (confidence) {
+            if (!localStorage._checker) {
+            let time = new Date();
+            time = time.getTime();
+            time = time - (time % 86400000);
+            localStorage._checker = time;
+            }
             let switches = document.body.querySelectorAll(".switch");
             let toTrash = [];
             for (let i = 0; i < switches.length; i++) {
@@ -510,7 +556,7 @@
                 let newCount = maxCount - count;
                 arrProducts[j].count = newCount;
                 switches[i].setAttribute("count", newCount);
-                switches[i].parentNode.parentNode.children[2].innerHTML = newCount + " шт.";
+                switches[i].parentNode.parentNode.children[2].innerHTML = newCount + " " + arrProducts[j].countType;
                 switches[i].innerHTML = "";
                 switches[i].style.backgroundColor = "#0f9";
                 switches[i].setAttribute("select", "off");

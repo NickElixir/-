@@ -103,8 +103,9 @@ body {
 .switch {
     background-color: #0F9;
     border: 0.2em solid #fff;
-    width: 1.6em;
-    height: 1.6em;
+    max-width: 2.5em;
+    min-height: 1.6em;
+    font-size: 0.8em;
     -webkit-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
     -moz-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
@@ -221,7 +222,7 @@ nav ul li:hover {
         padding: 1em;
     }
 }
-input {
+input[type="text"] {
     display: block;
     background-color: transparent;
     color: rgba(0,0,0,.87);
@@ -235,6 +236,18 @@ input {
 input:focus {
     border-color: #2196F3;
     border-width: 2px;
+}
+input[type="radio"] {
+    margin: 0 1em;
+    cursor: pointer;
+    width: 1.2em;
+    height: 1.2em;
+}
+.radio {
+    cursor: pointer;
+}
+.radio:hover {
+    color: #2196F3;
 }
 legend {
     display: block;
