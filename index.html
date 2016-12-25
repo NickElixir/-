@@ -7,13 +7,8 @@
   </head>
   <body>
     <script>
-        if (!localStorage.arrProducts || !localStorage.arrProductsCollection) {
-          var arrProducts = [];
-          var arrProductsCollection = [];
-        } else {
-          var arrProducts = localStorage.arrProducts ? JSON.parse(localStorage.arrProducts) : [];
-          var arrProductsCollection = localStorage.arrProductsCollection ? JSON.parse(localStorage.arrProductsCollection) : [];
-        }
+        var arrProducts = localStorage.arrProducts ? JSON.parse(localStorage.arrProducts) : [];
+        var arrProductsCollection = localStorage.arrProductsCollection ? JSON.parse(localStorage.arrProductsCollection) : [];
         function Product(name, shelfLife, count) {
           this.name = name;
           this.shelfLife = shelfLife;
@@ -22,6 +17,7 @@
           this.datePurchase = this.datePurchase.getTime();
           this.datePurchase = this.datePurchase - (this.datePurchase % 86400000);
           this.countType = document.forms[1].elements.countType.value;
+          this.frozen = document.forms[1].elements.checkFrozen.checked;
           this.index = arrProducts.length;
         }
         function getRandomInt(min, max) {
@@ -191,10 +187,20 @@
           div = document.createElement("div");
           div.className = "mui-textfield";
           label = document.createElement("label");
-          label.innerHTML = "Срок годности по умолчанию";
+          label.innerHTML = "Срок годности по умолчанию в холодильнике";
           div.appendChild(label);
           input = document.createElement("input");
-          input.setAttribute("name", "defaultShelfLife");
+          input.setAttribute("name", "defaultShelfLifeFrozen");
+          input.type = "text";
+          div.appendChild(input);
+          form.appendChild(div);
+          div = document.createElement("div");
+          div.className = "mui-textfield";
+          label = document.createElement("label");
+          label.innerHTML = "Срок годности по умолчанию при комнатной температуре";
+          div.appendChild(label);
+          input = document.createElement("input");
+          input.setAttribute("name", "defaultShelfLifeNotFrozen");
           input.type = "text";
           div.appendChild(input);
           form.appendChild(div);
@@ -233,35 +239,68 @@
               i++;
               product = arrProductsCollection[i];
             }
-            document.forms[1].elements.shelfLife.value = product.shelfLife;
+            if (document.forms[1].elements.checkFrozen.checked) {
+              document.forms[1].elements.shelfLife.value = product.shelfLifeFrozen;
+            } else {
+              document.forms[1].elements.shelfLife.value = product.shelfLifeNotFrozen;
+            }
           });
           form.appendChild(select);
           form.appendChild(document.createElement("br"));
           label = document.createElement("label");
-          label.innerHTML = "Текущий срок годности";
+          label.innerHTML  ="Продукт в холодильнике или нет?";
           form.appendChild(label);
+          form.appendChild(document.createElement("br"));
+          let checkbox = document.createElement("input");
+          checkbox.name = "checkFrozen";
+          checkbox.type = "checkbox";
+          checkbox.checked = true;
+          checkbox.addEventListener("click", function(event) {
+            let i = 0;
+            let selected = document.forms[1].elements.name2.value;
+            let product = arrProductsCollection[i];
+            while (selected !== product.name) {
+              i++;
+              product = arrProductsCollection[i];
+            }
+            if (document.forms[1].elements.checkFrozen.checked) {
+              document.forms[1].elements.shelfLife.value = product.shelfLifeFrozen;
+            } else {
+              document.forms[1].elements.shelfLife.value = product.shelfLifeNotFrozen;
+            }
+          });
+          form.appendChild(checkbox);
+          let div = document.createElement("div");
+          div.className = "mui-textfield";
+          label = document.createElement("label");
+          label.innerHTML = "Текущий срок годности";
+          div.appendChild(label);
           let shelfLife = document.createElement("input");
           shelfLife.setAttribute("name", "shelfLife");
           shelfLife.type = "text";
           if (arrProductsCollection[0]) {
-            let i = 0
+            let i = 0;
             let selected = select.value;
             let product = arrProductsCollection[i];
             while (selected !== product.name) {
               i++;
               product = arrProductsCollection[i];
             }
-            shelfLife.value = product.shelfLife;
+            shelfLife.value = product.shelfLifeFrozen;
           }
-          form.appendChild(shelfLife);
+          div.appendChild(shelfLife);
+          form.appendChild(div);
+          div = document.createElement("div");
+          div.className = "mui-textfield";
           label = document.createElement("label");
           label.innerHTML = "Количество";
-          form.appendChild(label);
+          div.appendChild(label);
           let count = document.createElement("input");
           count.setAttribute("name", "count");
           count.type = "text";
           count.value = 1;
-          form.appendChild(count);
+          div.appendChild(count);
+          form.appendChild(div);
           label = document.createElement("label");
           label.innerHTML = "Единица измерения";
           form.appendChild(label);
@@ -318,8 +357,9 @@
         function createProduct(event) {
           event.preventDefault();
           let name = document.forms[0].elements.name1.value;
-          let shelfLife = parseInt(document.forms[0].elements.defaultShelfLife.value);
-          if (!name || !isNumeric(shelfLife)) {
+          let shelfLifeFrozen = parseInt(document.forms[0].elements.defaultShelfLifeFrozen.value);
+          let shelfLifeNotFrozen = parseInt(document.forms[0].elements.defaultShelfLifeNotFrozen.value);
+          if (!name || !isNumeric(shelfLifeFrozen) || !isNumeric(shelfLifeNotFrozen)) {
             alert("Форма заполнена неправильно");
             return;
           }
@@ -333,7 +373,8 @@
           if (a) {
             let object = {};
             object.name = name;
-            object.shelfLife = shelfLife;
+            object.shelfLifeFrozen = shelfLifeFrozen;
+            object.shelfLifeNotFrozen = shelfLifeNotFrozen;
             arrProductsCollection.push(object);
             localStorage.arrProductsCollection = JSON.stringify(arrProductsCollection);
             let arr = sortProducts(arrProductsCollection, "name");
@@ -343,8 +384,10 @@
               let option = new Option(arr[i].name, arr[i].name);
               select.appendChild(option);
             }
+            alert("Продукт успешно добавлен в коллекцию");
+          } else {
+          alert("В коллекции уже есть продукт с таким именем");
           }
-          alert("Продукт успешно добавлен в коллекцию");
         }
         function addProduct(event) {
           event.preventDefault();
@@ -377,6 +420,9 @@
           arrProducts.push(object);
           localStorage.arrProducts = JSON.stringify(arrProducts);
           let tr = createTrProduct(arrProducts, object.index);
+          if (object.frozen) {
+            tr.className = "frozen";
+          }
           document.querySelector(".arr-products tbody").appendChild(tr);
           alert("Продукт успешно добавлен");
         }

@@ -70,18 +70,24 @@ body {
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
 .arr-products th {
-    background-color: #3519d1;
+    background-color: #ff424b;
     padding: 0.5em;
     text-align: center;
 }
 .arr-products th:hover {
-    background-color: #d11959;
+    background-color: #ff545d;
 }
-.arr-products tr{
-    background-color: #42aaff;
+.arr-products tr {
+    background-color: #492fd1;
     text-align: center;
 }
 .arr-products tr:hover {
+    background-color: #5d46da;
+}
+.frozen {
+    background-color: #42aaff;
+}
+.frozen:hover {
     background-color: #0f93ff;
 }
 .arr-products td {
@@ -104,7 +110,7 @@ body {
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
 .button:hover {
-    background-color: #e700e7;
+    background-color: #fc771d;
 }
 .switch {
     background-color: #0F9;
@@ -250,6 +256,11 @@ input[type="radio"] {
     width: 1.2em;
     height: 1.2em;
 }
+input[type="checkbox"] {
+    width: 1.5em;
+    height: 1.5em;
+    margin: 0.5em 0.5em 0;
+}
 .radio {
     cursor: pointer;
 }
@@ -261,6 +272,8 @@ legend {
     width: 100%;
     padding: 0;
     margin-bottom: 10px;
+    font-size: 1.2em;
+    text-align: center;
 }
 form {
     padding: 0.75em;
@@ -281,7 +294,6 @@ form {
 }
 .mui-textfield {
     display: block;
-    padding-top: 0.75em;
     margin-bottom: 1em;
     position: relative;
 }
