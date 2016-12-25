@@ -96,6 +96,13 @@
           if (document.body.querySelector(".visible")) {
             document.body.querySelector(".visible").className = "invisible";
             document.body.querySelector("#" + event.target.getAttribute("key")).className = "visible";
+            console.log(document.querySelector(".icon"));
+            if (document.body.clientWidth < 768) {
+              document.querySelector("body").classList.toggle("navOpen");
+              document.querySelector("nav").classList.toggle("open");
+              document.querySelector(".container").classList.toggle("open");
+              document.querySelector(".openNav").classList.toggle("open");
+            }
           }
         }
         function createMenu() {
