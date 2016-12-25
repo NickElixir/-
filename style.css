@@ -184,11 +184,6 @@ body {
     -webkit-transform: rotate(45deg);
     }
 }
-@media (min-width: 768px) {
-    .openNav .icon {
-        display: none;
-    }
-}
 nav {
   background-color: #00e700;
   width: 100%;
