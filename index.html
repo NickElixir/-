@@ -420,9 +420,6 @@
           arrProducts.push(object);
           localStorage.arrProducts = JSON.stringify(arrProducts);
           let tr = createTrProduct(arrProducts, object.index);
-          if (object.frozen) {
-            tr.className = "frozen";
-          }
           document.querySelector(".arr-products tbody").appendChild(tr);
           alert("Продукт успешно добавлен");
         }
@@ -467,6 +464,9 @@
           td.innerHTML = "<div class='switch' select='off' index='" + arr[i].index + "' count='0'></div>";
           td.style.padding = "0.5em";
           tr.appendChild(td);
+          if (arr[i].frozen) {
+            tr.className = "frozen";
+          }
           return tr;
         }
         function sortTableProducts(event) {

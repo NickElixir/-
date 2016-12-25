@@ -84,11 +84,11 @@ body {
 .arr-products tr:hover {
     background-color: #5d46da;
 }
-.frozen {
-    background-color: #42aaff;
-}
-.frozen:hover {
+.arr-products .frozen {
     background-color: #0f93ff;
+}
+.arr-products .frozen:hover {
+    background-color: #42aaff;
 }
 .arr-products td {
         padding: 0.2em;
