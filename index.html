@@ -198,21 +198,17 @@
           section.className = "menu";
           let nav = document.createElement("nav");
           let ul = document.createElement("ul");
-          let main = document.createElement("li");
-          main.innerHTML = "Главная";
-          main.setAttribute("key", "main");
-          main.addEventListener("click", selectSection);
-          ul.appendChild(main);
-          let form = document.createElement("li");
-          form.innerHTML = "Добавить продукт";
-          form.setAttribute("key", "form");
-          form.addEventListener("click", selectSection);
-          ul.appendChild(form);
-          let about = document.createElement("li");
-          about.innerHTML = "О сервисе";
-          about.setAttribute("key", "about");
-          about.addEventListener("click", selectSection);
-          ul.appendChild(about);
+          function createLi(name, key) {
+            let li = document.createElement("li");
+            li.innerHTML = name;
+            li.setAttribute("key", key);
+            li.addEventListener("click", selectSection);
+            ul.appendChild(li);
+          }
+          createLi("Главная", "main");
+          createLi("Добавить продукт", "form");
+          createLi("Список покупок", "shopping-list");
+          createLi("О сервисе", "about");
           nav.appendChild(ul);
           section.appendChild(nav);
           let openNav = document.createElement("div");
@@ -684,11 +680,21 @@
           section.appendChild(p);
           div.appendChild(section);
         }
+        function createShoppingListSection() {
+          let section = document.createElement("section");
+          section.id = "shopping-list";
+          section.className = "invisible";
+          let h1 = document.createElement("h1");
+          h1.innerHTML = "Список покупок";
+          section.appendChild(h1);
+          document.querySelector(".container").appendChild(section);
+        }
         updateShelfLifes();
         createMenu();
         createDivContainer();
         writeProducts();
         createSectionFormProduct();
+        createShoppingListSection();
         createAbout();
         console.log(performance.now());
     </script>
