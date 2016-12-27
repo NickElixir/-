@@ -90,6 +90,9 @@
             document.querySelector(".arr-products tbody").appendChild(tr);
             alert("Продукт успешно добавлен");
           }
+          deleteProduct(index){
+            arrProducts.splice(index, 1);
+          }
         }
         function getRandomInt(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -113,9 +116,6 @@
         Element.prototype.fadeOut = fadeOut;
         function isNumeric(n) {
           return !isNaN(parseFloat(n)) && isFinite(n);
-        }    
-        function deleteProduct(index){
-          arrProducts.splice(index, 1);
         }
         function sortProducts(arr, method) {
           if (method == "name") {
@@ -258,22 +258,59 @@
               document.forms[1].elements.shelfLife.value = product.shelfLifeNotFrozen;
             }
         }
+        function createInput(name, type, header) {
+          if (type == "text") {
+            let div = document.createElement("div");
+            div.className = "mui-textfield";
+            let label = document.createElement("label");
+            label.innerHTML = header;
+            div.appendChild(label);
+            let input = document.createElement("input");
+            input.setAttribute("name", name);
+            input.type = "text";
+            div.appendChild(input);
+            return div;
+          } else if (type == "submit") {
+            let submit = document.createElement("button");
+            submit.type = "submit";
+            submit.setAttribute("name", name);
+            submit.className = "mui-btn";
+            submit.innerHTML = "Отправить";
+            return submit;
+          } else if (type == "select") {
+            let select = document.createElement("select");
+            select.setAttribute("name", name);
+            select.className = "mui-select";
+            select.addEventListener("blur", changeShelfLifeValue);
+            return select;
+          } else if (type == "checkbox") {
+            let checkbox = document.createElement("input");
+            checkbox.name = name;
+            checkbox.type = "checkbox";
+            checkbox.checked = true;
+            checkbox.addEventListener("click", changeShelfLifeValue);
+            return checkbox;
+          } else if (type == "radio") {
+            let p = document.createElement("p");
+            p.className = "radio";
+            let radio = document.createElement("input");
+            radio.type = "radio";
+            radio.setAttribute("name", name);
+            radio.checked = true;
+            radio.value = "ШТ";
+            p.appendChild(radio);
+            p.appendChild(document.createTextNode(header));
+            p.addEventListener("click", focusRadioParagraph);
+            return p;
+          }
+        }
         function createFirstForm() {
           let form = document.createElement("form");
           form.setAttribute("name", "createProduct");
           let legend = document.createElement("legend");
           legend.innerHTML = "Добавить новый продукт в коллекцию";
           form.appendChild(legend);
-          let div = document.createElement("div");
-          div.className = "mui-textfield";
-          let label = document.createElement("label");
-          label.innerHTML = "Название продукта";
-          div.appendChild(label);
-          let input = document.createElement("input");
-          input.setAttribute("name", "name1");
-          input.type = "text";
-          div.appendChild(input);
-          form.appendChild(div);
+          form.appendChild(createInput("name1", "text", "Название продукта"));
           let button = document.createElement("span");
           button.className = "note";
           button.innerHTML = "Примечание";
@@ -283,33 +320,10 @@
           button.appendChild(comment);
           button.addEventListener("click", showComment);
           form.appendChild(button);
-          div = document.createElement("div");
-          div.className = "mui-textfield";
-          label = document.createElement("label");
-          label.innerHTML = "Срок годности по умолчанию в холодильнике";
-          div.appendChild(label);
-          input = document.createElement("input");
-          input.setAttribute("name", "defaultShelfLifeFrozen");
-          input.type = "text";
-          div.appendChild(input);
-          form.appendChild(div);
-          div = document.createElement("div");
-          div.className = "mui-textfield";
-          label = document.createElement("label");
-          label.innerHTML = "Срок годности по умолчанию при комнатной температуре";
-          div.appendChild(label);
-          input = document.createElement("input");
-          input.setAttribute("name", "defaultShelfLifeNotFrozen");
-          input.type = "text";
-          div.appendChild(input);
-          form.appendChild(div);
-          let submit = document.createElement("button");
-          submit.type = "submit";
-          submit.setAttribute("name", "submit1");
-          submit.className = "mui-btn";
-          submit.innerHTML = "Отправить";
-          form.appendChild(submit);
-          form.appendChild(document.createElement("br"));
+          form.appendChild(createInput("defaultShelfLifeFrozen", "text", "Срок годности в холодильнике"));
+          form.appendChild(createInput("defaultShelfLifeNotFrozen", "text", "Срок годности при комнатной температуре"));
+          form.appendChild(createInput("submit1", "submit"));
+          //form.appendChild(document.createElement("br"));
           form.addEventListener("submit", Product.prototype.createProduct);
           return form;
         }
@@ -322,35 +336,19 @@
           let label = document.createElement("label");
           label.innerHTML = "Название продукта";
           form.appendChild(label);
-          form.appendChild(document.createElement("br"));
-          let select = document.createElement("select");
-          select.setAttribute("name", "name2");
-          select.className = "mui-select";
+          let select = createInput("name2", "select");
           for (let i = 0; i < arrProductsCollection.length; i++) {
             let option = new Option(arrProductsCollection[i].name, arrProductsCollection[i].name);
             select.appendChild(option);
           }
-          select.addEventListener("blur", changeShelfLifeValue);
           form.appendChild(select);
           form.appendChild(document.createElement("br"));
           label = document.createElement("label");
           label.innerHTML  ="Продукт в холодильнике или нет?";
           form.appendChild(label);
           form.appendChild(document.createElement("br"));
-          let checkbox = document.createElement("input");
-          checkbox.name = "checkFrozen";
-          checkbox.type = "checkbox";
-          checkbox.checked = true;
-          checkbox.addEventListener("click", changeShelfLifeValue);
-          form.appendChild(checkbox);
-          let div = document.createElement("div");
-          div.className = "mui-textfield";
-          label = document.createElement("label");
-          label.innerHTML = "Текущий срок годности";
-          div.appendChild(label);
-          let shelfLife = document.createElement("input");
-          shelfLife.setAttribute("name", "shelfLife");
-          shelfLife.type = "text";
+          form.appendChild(createInput("checkFrozen", "checkbox"));
+          let shelfLife = createInput("shelfLife", "text", "Текущий срок годности");
           if (arrProductsCollection[0]) {
             let i = 0;
             let selected = select.value;
@@ -359,61 +357,18 @@
               i++;
               product = arrProductsCollection[i];
             }
-            shelfLife.value = product.shelfLifeFrozen;
+            shelfLife.children[1].value = product.shelfLifeFrozen;
           }
-          div.appendChild(shelfLife);
-          form.appendChild(div);
-          div = document.createElement("div");
-          div.className = "mui-textfield";
-          label = document.createElement("label");
-          label.innerHTML = "Количество";
-          div.appendChild(label);
-          let count = document.createElement("input");
-          count.setAttribute("name", "count");
-          count.type = "text";
-          count.value = 1;
-          div.appendChild(count);
-          form.appendChild(div);
+          form.appendChild(shelfLife);
+          form.appendChild(createInput("count", "text", "Количество"));
           label = document.createElement("label");
           label.innerHTML = "Единица измерения";
           form.appendChild(label);
-          let p = document.createElement("p");
-          p.className = "radio";
-          let radio = document.createElement("input");
-          radio.type = "radio";
-          radio.setAttribute("name", "countType");
-          radio.checked = true;
-          radio.value = "ШТ";
-          p.appendChild(radio);
-          p.appendChild(document.createTextNode("ШТ"));
-          p.addEventListener("click", focusRadioParagraph);
-          form.appendChild(p);
-          p = document.createElement("p");
-          p.className = "radio";
-          radio = document.createElement("input");
-          radio.type = "radio";
-          radio.setAttribute("name", "countType");
-          radio.value = "КГ";
-          p.appendChild(radio);
-          p.appendChild(document.createTextNode("КГ"));
-          p.addEventListener("click", focusRadioParagraph);
-          form.appendChild(p);
-          p = document.createElement("p");
-          p.className = "radio";
-          radio = document.createElement("input");
-          radio.type = "radio";
-          radio.setAttribute("name", "countType");
-          radio.value = "Г";
-          p.appendChild(radio);
-          p.appendChild(document.createTextNode("Г"));
-          p.addEventListener("click", focusRadioParagraph);
-          form.appendChild(p);
+          form.appendChild(createInput("countType", "radio", "ШТ"));
+          form.appendChild(createInput("countType", "radio", "КГ"));
+          form.appendChild(createInput("countType", "radio", "Г"));
           let submit = document.createElement("input");
-          submit.type = "submit";
-          submit.setAttribute("name", "submit1");
-          submit.className = "mui-btn";
-          submit.innerHTML = "Отправить";
-          form.appendChild(submit);
+          form.appendChild(createInput("submit1", "submit"));
           form.addEventListener("submit", Product.prototype.addProduct);
           return form;
         }
@@ -455,19 +410,15 @@
         function createTrProduct(arr, i) {
           let tr = document.createElement("tr");
           tr.setAttribute("index", arr[i].index);
-          let td = document.createElement("td");
-          td.innerHTML = "<p>" + arr[i].name + "</p>";
-          tr.appendChild(td);
-          td = document.createElement("td");
-          td.innerHTML = "<p>" + arr[i].shelfLife + " дн</p>";
-          tr.appendChild(td);
-          td = document.createElement("td");
-          td.innerHTML = "<p>" + arr[i].count + " " + arr[i].countType + "</p>";
-          tr.appendChild(td);
-          td = document.createElement("td");
-          td.innerHTML = "<div class='switch' select='off' index='" + arr[i].index + "' count='0'></div>";
-          td.style.padding = "0.5em";
-          tr.appendChild(td);
+          function createTd(content) {
+            let td = document.createElement("td");
+            td.innerHTML = content;
+            tr.appendChild(td);
+          }
+          createTd("<p>" + arr[i].name + "</p>");
+          createTd("<p>" + arr[i].shelfLife + " дн</p>");
+          createTd("<p>" + arr[i].count + " " + arr[i].countType + "</p>");
+          createTd("<div class='switch' select='off' index='" + arr[i].index + "' count='0'></div>");
           if (arr[i].frozen) {
             tr.className = "frozen";
           }
@@ -497,20 +448,16 @@
           let table = document.createElement("table");
           table.setAttribute("cellspacing", "0");
           let thead = document.createElement("thead");
-          let th = document.createElement("th");
-          th.innerHTML = "<p>Род и вид</p>";
-          th.firstChild.addEventListener("click", sortTableProducts);
-          thead.appendChild(th);
-          th = document.createElement("th");
-          th.innerHTML = "<p>Срок годности</p>"
-          th.firstChild.addEventListener("click", sortTableProducts);
-          thead.appendChild(th)
-          th = document.createElement("th");
-          th.innerHTML = "<p>Количество</p>";
-          th.addEventListener("click", sortTableProducts);
-          thead.appendChild(th);
-          th = document.createElement("th");
-          thead.appendChild(th);
+          function createTh(content) {
+            let th = document.createElement("th");
+            th.innerHTML = content;
+            th.firstChild.addEventListener("click", sortTableProducts);
+            thead.appendChild(th); 
+          }
+          createTh("<p>Род и вид</p>");
+          createTh("<p>Срок годности</p>");
+          createTh("<p>Количество</p>");
+          thead.children[2].setAttribute("colspan", 2);
           table.appendChild(thead);
           let tbody = createTbodyProducts(arr);
           table.appendChild(tbody);
