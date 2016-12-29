@@ -59,9 +59,9 @@
           addProduct(event) {
             event.preventDefault();
             let name = document.forms[1].elements.name2.value;
-            let count = parseInt(document.forms[1].elements.count.value);
-            if (count < 1) {
-              alert("Количество не может быть меньше 1шт.");
+            let count = parseFloat(document.forms[1].elements.count.value);
+            if (count <= 0) {
+              alert("Количество не может быть меньше или равно 0");
               return;
             }
             let shelfLife = parseInt(document.forms[1].elements.shelfLife.value);
@@ -297,7 +297,7 @@
             radio.type = "radio";
             radio.setAttribute("name", name);
             radio.checked = true;
-            radio.value = "ШТ";
+            radio.value = header;
             p.appendChild(radio);
             p.appendChild(document.createTextNode(header));
             p.addEventListener("click", focusRadioParagraph);
