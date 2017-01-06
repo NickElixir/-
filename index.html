@@ -4,6 +4,7 @@
     <meta charset="utf-8" name=viewport content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="style.css">
     <link href="fonts/Roboto_Condensed/font.css" rel="stylesheet">
+    <script src="form.js"></script>
   </head>
   <body>
     <script>
@@ -14,18 +15,20 @@
             this.name = name;
             this.shelfLife = shelfLife;
             this.count = count;
-            this.datePurchase = new Date();
-            this.datePurchase = this.datePurchase.getTime();
+            this.datePurchase = new Date().getTime();
             this.datePurchase = this.datePurchase - (this.datePurchase % 86400000);
-            this.countType = document.forms[1].elements.countType.value;
-            this.frozen = document.forms[1].elements.checkFrozen.checked;
+            this.countType = document.forms.addProduct.elements.countType.value;
+            this.frozen = document.forms.addProduct.elements.checkFrozen.checked;
             this.index = arrProducts.length;
           }
           createProduct(event) {
             event.preventDefault();
-            let name = document.forms[0].elements.name1.value;
-            let shelfLifeFrozen = parseInt(document.forms[0].elements.defaultShelfLifeFrozen.value);
-            let shelfLifeNotFrozen = parseInt(document.forms[0].elements.defaultShelfLifeNotFrozen.value);
+            let name = document.forms.createProduct.elements.name1.value;
+            let shelfLifeFrozen = parseInt(document.forms.createProduct.elements.defaultShelfLifeFrozen.value);
+            let shelfLifeNotFrozen = parseInt(document.forms.createProduct.elements.defaultShelfLifeNotFrozen.value);
+            console.log(name);
+            console.log(shelfLifeFrozen);
+            console.log(shelfLifeNotFrozen);
             if (!name || !isNumeric(shelfLifeFrozen) || !isNumeric(shelfLifeNotFrozen)) {
               alert("Форма заполнена неправильно");
               return;
@@ -57,14 +60,18 @@
             }
           }
           addProduct(event) {
+            if (!document.forms.addProduct.elements.countType.value) {
+              alert("Не указана единица измерения. Исправьте, и повторите попытку.");
+              return;
+            }
             event.preventDefault();
-            let name = document.forms[1].elements.name2.value;
-            let count = parseFloat(document.forms[1].elements.count.value);
-            if (count <= 0) {
+            let name = document.forms.addProduct.elements.name2.value;
+            let count = parseFloat(document.forms.addProduct.elements.count.value);
+            if (count <= 0 || !isNumeric(count)) {
               alert("Количество не может быть меньше или равно 0");
               return;
             }
-            let shelfLife = parseInt(document.forms[1].elements.shelfLife.value);
+            let shelfLife = parseInt(document.forms.addProduct.elements.shelfLife.value);
             let i = 0;
             let product = arrProducts[i];
             while (i < arrProducts.length) {
@@ -83,15 +90,18 @@
                 i++;
               }
             }
-            let object = new Product(name, shelfLife, count);
-            arrProducts.push(object);
+            let obj = new Product(name, shelfLife, count);
+            arrProducts.push(obj);
             localStorage.arrProducts = JSON.stringify(arrProducts);
-            let tr = createTrProduct(arrProducts, object.index);
+            let tr = createTrProduct(arrProducts, obj.index);
             document.querySelector(".arr-products tbody").appendChild(tr);
             alert("Продукт успешно добавлен");
           }
           deleteProduct(index){
             arrProducts.splice(index, 1);
+            for (let i = index; i < arrProducts.length; i++) {
+              arrProducts[i].index -= 1;
+            }
           }
         }
         function getRandomInt(min, max) {
@@ -258,127 +268,37 @@
               document.forms[1].elements.shelfLife.value = product.shelfLifeNotFrozen;
             }
         }
-        function createInput(name, type, header) {
-          if (type == "text") {
-            let div = document.createElement("div");
-            div.className = "mui-textfield";
-            let label = document.createElement("label");
-            label.innerHTML = header;
-            div.appendChild(label);
-            let input = document.createElement("input");
-            input.setAttribute("name", name);
-            input.type = "text";
-            div.appendChild(input);
-            return div;
-          } else if (type == "submit") {
-            let submit = document.createElement("button");
-            submit.type = "submit";
-            submit.setAttribute("name", name);
-            submit.className = "mui-btn";
-            submit.innerHTML = "Отправить";
-            return submit;
-          } else if (type == "select") {
-            let select = document.createElement("select");
-            select.setAttribute("name", name);
-            select.className = "mui-select";
-            select.addEventListener("blur", changeShelfLifeValue);
-            return select;
-          } else if (type == "checkbox") {
-            let checkbox = document.createElement("input");
-            checkbox.name = name;
-            checkbox.type = "checkbox";
-            checkbox.checked = true;
-            checkbox.addEventListener("click", changeShelfLifeValue);
-            return checkbox;
-          } else if (type == "radio") {
-            let p = document.createElement("p");
-            p.className = "radio";
-            let radio = document.createElement("input");
-            radio.type = "radio";
-            radio.setAttribute("name", name);
-            radio.checked = true;
-            radio.value = header;
-            p.appendChild(radio);
-            p.appendChild(document.createTextNode(header));
-            p.addEventListener("click", focusRadioParagraph);
-            return p;
-          }
+        function createProductForm() {
+          let elements = [new Input("name1", "Название продукта", "text"), new Input("defaultShelfLifeFrozen", "Срок годности в холодильнике", "text"), new Input("defaultShelfLifeNotFrozen", "Срок годности при комнатной температуре", "text")];
+          return new Form("createProduct", elements, "Добавить новый продукт в коллекцию", Product.prototype.createProduct, new Submit("submit", "Отправить")).elem;
         }
-        function createFirstForm() {
-          let form = document.createElement("form");
-          form.setAttribute("name", "createProduct");
-          let legend = document.createElement("legend");
-          legend.innerHTML = "Добавить новый продукт в коллекцию";
-          form.appendChild(legend);
-          form.appendChild(createInput("name1", "text", "Название продукта"));
-          let button = document.createElement("span");
-          button.className = "note";
-          button.innerHTML = "Примечание";
-          let comment = document.createElement("div");
-          comment.innerHTML = "<p>Лучше указать запись вида: род + вид. Желательно использовать множественное число.</p>";
-          comment.hidden = true;
-          button.appendChild(comment);
-          button.addEventListener("click", showComment);
-          form.appendChild(button);
-          form.appendChild(createInput("defaultShelfLifeFrozen", "text", "Срок годности в холодильнике"));
-          form.appendChild(createInput("defaultShelfLifeNotFrozen", "text", "Срок годности при комнатной температуре"));
-          form.appendChild(createInput("submit1", "submit"));
-          //form.appendChild(document.createElement("br"));
-          form.addEventListener("submit", Product.prototype.createProduct);
-          return form;
-        }
-        function createSecondForm() {
-          let form = document.createElement("form");
-          form.setAttribute("name", "addProduct");
-          let legend = document.createElement("legend");
-          legend.innerHTML = "Добавить продукт";
-          form.appendChild(legend);
-          let label = document.createElement("label");
-          label.innerHTML = "Название продукта";
-          form.appendChild(label);
-          let select = createInput("name2", "select");
+        function addProductForm() {
+          let options = [];
           for (let i = 0; i < arrProductsCollection.length; i++) {
-            let option = new Option(arrProductsCollection[i].name, arrProductsCollection[i].name);
-            select.appendChild(option);
+            let option = {text: arrProductsCollection[i].name, value: arrProductsCollection[i].name};
+            options.push(option);
           }
-          form.appendChild(select);
-          form.appendChild(document.createElement("br"));
-          label = document.createElement("label");
-          label.innerHTML  ="Продукт в холодильнике или нет?";
-          form.appendChild(label);
-          form.appendChild(document.createElement("br"));
-          form.appendChild(createInput("checkFrozen", "checkbox"));
-          let shelfLife = createInput("shelfLife", "text", "Текущий срок годности");
-          if (arrProductsCollection[0]) {
+          let select = new Select("name2", options, "Название продукта");
+          let shelfLife = new Input("shelfLife", "Текущий срок годности", "text");
+          if (arrProductsCollection[0]) { //automatic upload shelf life from arrProductsCollection
             let i = 0;
-            let selected = select.value;
+            let selected = select.elem.value;
             let product = arrProductsCollection[i];
             while (selected !== product.name) {
               i++;
               product = arrProductsCollection[i];
             }
-            shelfLife.children[1].value = product.shelfLifeFrozen;
+            shelfLife.elem.value = product.shelfLifeFrozen;
           }
-          form.appendChild(shelfLife);
-          form.appendChild(createInput("count", "text", "Количество"));
-          label = document.createElement("label");
-          label.innerHTML = "Единица измерения";
-          form.appendChild(label);
-          form.appendChild(createInput("countType", "radio", "ШТ"));
-          form.appendChild(createInput("countType", "radio", "КГ"));
-          form.appendChild(createInput("countType", "radio", "Г"));
-          let submit = document.createElement("input");
-          form.appendChild(createInput("submit1", "submit"));
-          form.addEventListener("submit", Product.prototype.addProduct);
-          return form;
+          let radio = [{name: "countType", header: "ШТ", value: "ШТ"}, {name: "countType", header: "КГ", value: "КГ"}, {name: "countType", header: "Г", value: "Г"}];
+          let elements = [select, new Checkbox("checkFrozen", "Продукт в холодильнике или нет?"), shelfLife, new Input("count", "Количество", "text"), new RadioList("Единица измерения", radio)]
+          return new Form("addProduct", elements, "Добавить продукт", Product.prototype.addProduct, new Submit("submit", "Отправить")).elem;
         }
         function createSectionFormProduct() {
           let section = document.createElement("section");
           section.setAttribute("id", "form");
-          let form1 = createFirstForm();
-          section.appendChild(form1);
-          let form2 = createSecondForm();
-          section.appendChild(form2);
+          section.appendChild(createProductForm());
+          section.appendChild(addProductForm());
           section.className = "invisible";
           document.body.querySelector(".container").appendChild(section);
         }
@@ -592,10 +512,11 @@
                 }, 600);
               })
               setTimeout(function(){
-                let trs = document.querySelectorAll('tbody tr');
-                Array.prototype.forEach.call(trs,(e,ind)=>{
-                    e.setAttribute('index',ind);
-                    e.querySelector('.switch').setAttribute('index',ind);
+                let trs = document.querySelectorAll('.arr-products tbody tr');
+                console.log(trs);
+                Array.prototype.forEach.call(trs,(e, ind)=>{
+                    e.setAttribute('index', ind);
+                    e.querySelector('.switch').setAttribute('index', ind);
                 })
               },1100)
             }

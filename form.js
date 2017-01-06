@@ -1,10 +1,22 @@
 class Form {
-    constructor(name, elements, legend) {
+    constructor(name, elements, legend, submitFunc, submitElem) {
         this.name = name;
         this.elements = elements;
         if (legend) {
             this.legend = legend;
         }
+        if (submitFunc) {
+            this.submitFunc = submitFunc;
+        } else {
+            alert("There is no submit function! Please add to this.submitFunc.");
+        }
+        if (submitElem) {
+            this.submitElem = submitElem;
+        } else {
+            alert("Therу is no submit element! It will be made automatically.");
+            this.submitElem = new Submit(this.name + "-submit", "Отправить");
+        }
+        this.render();
     }
     render() {
         let form = document.createElement("form");
@@ -23,6 +35,10 @@ class Form {
             div.appendChild(this.elements[i].elem);
             form.appendChild(div);
         }
+        form.addEventListener("submit", this.submitFunc);
+        this.submitElem.render();
+        form.appendChild(this.submitElem.elem);
+
         this.elem = form;
     }
 }
@@ -33,6 +49,7 @@ class Input {
             this.type = type;
         }
         this.header = header;
+        this.render();
     }
     render() {
         let input = document.createElement("input");
@@ -47,6 +64,7 @@ class Input {
 class Checkbox extends Input {
     constructor(name, header) {
         super(name, header, "checkbox");
+        this.render();
     }
     render() {
         super.render();
@@ -56,23 +74,26 @@ class Radio extends Input {
     constructor(name, text, value) {
         super(name, text, "radio");
         this.value = value;
+        this.render();
     }
     render() {
         let p = document.createElement("p");
+        p.className = "radio";
         super.render();
         let input = this.elem;
         input.type = this.type;
         input.value = this.value;
         p.appendChild(input);
         p.appendChild(document.createTextNode(this.header));
+        p.addEventListener("click", focusRadioParagraph);
         this.elem = p;
     }
 }
 class RadioList {
-    constructor(name, elements, header) {
-        this.name = name;
+    constructor(header, elements) {
         this.elements = elements;
         this.header = header;
+        this.render();
     }
     render() {
         let div = document.createElement("div");
@@ -84,11 +105,22 @@ class RadioList {
         this.elem = div;
     }
 }
+class Submit extends Input {
+    constructor(name, header) {
+        super(name, header, "submit");
+        this.render();
+    }
+    render() {
+        super.render();
+        this.elem.value = this.header;
+    }
+}
 class Select {
     constructor(name, options, header) {
         this.name = name;
         this.options = options;
         this.header = header;
+        this.render();
     }
     render() {
         let select = document.createElement("select");
@@ -106,6 +138,5 @@ class Select {
             options.push(option);
         }
         this.renderedOptions = options;
-        console.log(this.renderedOptions);
     }
 }

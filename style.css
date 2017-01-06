@@ -297,7 +297,7 @@ form {
     margin-bottom: 1em;
     position: relative;
 }
-.mui-btn {
+input[type="submit"] {
     background-color: #FFF;
     transition: all .2s ease-in-out;
     display: inline-block;
@@ -322,7 +322,7 @@ form {
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
     font-size: 1em;
 }
-.mui-select {
+select {
     display: block;
     height: 1.5em;
     appearance: none;
