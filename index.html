@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="style.css">
     <link href="fonts/Roboto_Condensed/font.css" rel="stylesheet">
     <script src="form.js"></script>
+    <script src="note.js"></script>
   </head>
   <body>
     <script>
@@ -26,9 +27,6 @@
             let name = document.forms.createProduct.elements.name1.value;
             let shelfLifeFrozen = parseInt(document.forms.createProduct.elements.defaultShelfLifeFrozen.value);
             let shelfLifeNotFrozen = parseInt(document.forms.createProduct.elements.defaultShelfLifeNotFrozen.value);
-            console.log(name);
-            console.log(shelfLifeFrozen);
-            console.log(shelfLifeNotFrozen);
             if (!name || !isNumeric(shelfLifeFrozen) || !isNumeric(shelfLifeNotFrozen)) {
               alert("Форма заполнена неправильно");
               return;
@@ -269,7 +267,7 @@
             }
         }
         function createProductForm() {
-          let elements = [new Input("name1", "Название продукта", "text"), new Input("defaultShelfLifeFrozen", "Срок годности в холодильнике", "text"), new Input("defaultShelfLifeNotFrozen", "Срок годности при комнатной температуре", "text")];
+          let elements = [new Input("name1", "Название продукта", "text"), new Note("Примечание", "Лучше указать запись вида: род + вид. Желательно использовать множественное число."), new Input("defaultShelfLifeFrozen", "Срок годности в холодильнике", "text"), new Input("defaultShelfLifeNotFrozen", "Срок годности при комнатной температуре", "text")];
           return new Form("createProduct", elements, "Добавить новый продукт в коллекцию", Product.prototype.createProduct, new Submit("submit", "Отправить")).elem;
         }
         function addProductForm() {
@@ -513,7 +511,6 @@
               })
               setTimeout(function(){
                 let trs = document.querySelectorAll('.arr-products tbody tr');
-                console.log(trs);
                 Array.prototype.forEach.call(trs,(e, ind)=>{
                     e.setAttribute('index', ind);
                     e.querySelector('.switch').setAttribute('index', ind);

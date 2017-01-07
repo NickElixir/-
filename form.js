@@ -27,13 +27,17 @@ class Form {
             form.appendChild(legend);
         }
         for (let i in this.elements) {
-            let div = document.createElement("div");
-            div.className = "textfield";
-            let label = document.createElement("label");
-            label.innerHTML = this.elements[i].header;
-            div.appendChild(label);
-            div.appendChild(this.elements[i].elem);
-            form.appendChild(div);
+            if (this.elements[i] instanceof Note) {
+                form.appendChild(this.elements[i].elem);
+            } else {
+                let div = document.createElement("div");
+                div.className = "textfield";
+                let label = document.createElement("label");
+                label.innerHTML = this.elements[i].header;
+                div.appendChild(label);
+                div.appendChild(this.elements[i].elem);
+                form.appendChild(div);
+            }
         }
         form.addEventListener("submit", this.submitFunc);
         this.submitElem.render();
