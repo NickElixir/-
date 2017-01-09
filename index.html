@@ -267,8 +267,8 @@
             }
         }
         function createProductForm() {
-          let elements = [new Input("name1", "Название продукта", "text"), new Note("Примечание", "Лучше указать запись вида: род + вид. Желательно использовать множественное число."), new Input("defaultShelfLifeFrozen", "Срок годности в холодильнике", "text"), new Input("defaultShelfLifeNotFrozen", "Срок годности при комнатной температуре", "text")];
-          return new Form("createProduct", elements, "Добавить новый продукт в коллекцию", Product.prototype.createProduct, new Submit("submit", "Отправить")).elem;
+          let elements = [new Input("name1", "Название продукта"), new Note("Примечание", "Лучше указать запись вида: род + вид. Желательно использовать множественное число."), new Num("defaultShelfLifeFrozen", "Срок годности в холодильнике", {min: 0}), new Num("defaultShelfLifeNotFrozen", "Срок годности при комнатной температуре", {min: 0})];
+          return new Form("createProduct", elements, "Добавить новый продукт в коллекцию", Product.prototype.createProduct, new Submit("submit", "Отправить"));
         }
         function addProductForm() {
           let options = [];
@@ -277,7 +277,7 @@
             options.push(option);
           }
           let select = new Select("name2", options, "Название продукта");
-          let shelfLife = new Input("shelfLife", "Текущий срок годности", "text");
+          let shelfLife = new Num("shelfLife", "Текущий срок годности");
           if (arrProductsCollection[0]) { //automatic upload shelf life from arrProductsCollection
             let i = 0;
             let selected = select.elem.value;
@@ -289,14 +289,15 @@
             shelfLife.elem.value = product.shelfLifeFrozen;
           }
           let radio = [{name: "countType", header: "ШТ", value: "ШТ"}, {name: "countType", header: "КГ", value: "КГ"}, {name: "countType", header: "Г", value: "Г"}];
-          let elements = [select, new Checkbox("checkFrozen", "Продукт в холодильнике или нет?"), shelfLife, new Input("count", "Количество", "text"), new RadioList("Единица измерения", radio)]
-          return new Form("addProduct", elements, "Добавить продукт", Product.prototype.addProduct, new Submit("submit", "Отправить")).elem;
+          let elements = [select, new Checkbox("checkFrozen", "Продукт в холодильнике или нет?"), shelfLife, new Num("count", "Количество"), new RadioList("Единица измерения", radio)]
+          return new Form("addProduct", elements, "Добавить продукт", Product.prototype.addProduct, new Submit("submit", "Отправить"));
         }
         function createSectionFormProduct() {
           let section = document.createElement("section");
           section.setAttribute("id", "form");
-          section.appendChild(createProductForm());
-          section.appendChild(addProductForm());
+          console.log(createProductForm());
+          section.appendChild(createProductForm().elem);
+          section.appendChild(addProductForm().elem);
           section.className = "invisible";
           document.body.querySelector(".container").appendChild(section);
         }

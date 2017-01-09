@@ -235,7 +235,7 @@ nav ul li:hover {
         padding: 1em;
     }
 }
-input[type="text"] {
+input[type="text"], input[type="number"] {
     display: block;
     background-color: transparent;
     color: rgba(0,0,0,.87);

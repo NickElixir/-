@@ -47,27 +47,41 @@ class Form {
     }
 }
 class Input {
-    constructor(name, header, type) {
+    constructor(name, header, options) {
         this.name = name;
-        if (type) {
-            this.type = type;
-        }
+        this.type = "text"; 
         this.header = header;
+        if (options) {
+            this.options = options;
+        }
         this.render();
     }
     render() {
         let input = document.createElement("input");
         input.name = this.name;
         input.type = this.type;
+        if (this.options) {
+            for (let i in this.options) {
+                input.setAttribute(i, this.options[i]);
+            }
+        }
         this.elem = input;
     }
-    static createText(name, header) {
-        return new Input(name, header, "text");
+}
+class Num extends Input {
+    constructor(name, header, options) {
+        super(name, header, options);
+        this.type = "number";
+        this.render();
+    }
+    render() {
+        super.render();
     }
 }
 class Checkbox extends Input {
-    constructor(name, header) {
-        super(name, header, "checkbox");
+    constructor(name, header, options) {
+        super(name, header, options);
+        this.type = "checkbox";
         this.render();
     }
     render() {
@@ -75,9 +89,9 @@ class Checkbox extends Input {
     }
 }
 class Radio extends Input {
-    constructor(name, text, value) {
-        super(name, text, "radio");
-        this.value = value;
+    constructor(name, text, options) {
+        super(name, text, options);
+        this.type = "radio";
         this.render();
     }
     render() {
@@ -102,7 +116,7 @@ class RadioList {
     render() {
         let div = document.createElement("div");
         for (let i in this.elements) {
-            let radio = new Radio(this.elements[i].name, this.elements[i].header, this.elements[i].value);
+            let radio = new Radio(this.elements[i].name, this.elements[i].header, {value : this.elements[i].value});
             radio.render();
             div.appendChild(radio.elem);
         }
@@ -110,8 +124,9 @@ class RadioList {
     }
 }
 class Submit extends Input {
-    constructor(name, header) {
-        super(name, header, "submit");
+    constructor(name, header, options) {
+        super(name, header, options);
+        this.type = "submit";
         this.render();
     }
     render() {
@@ -120,9 +135,9 @@ class Submit extends Input {
     }
 }
 class Select {
-    constructor(name, options, header) {
+    constructor(name, Options, header) {
         this.name = name;
-        this.options = options;
+        this.Options = Options;
         this.header = header;
         this.render();
     }
@@ -137,8 +152,8 @@ class Select {
     }
     renderOptions() {
         let options = [];
-        for (let i in this.options) {
-            let option = new Option(this.options[i].text, this.options[i].value);
+        for (let i in this.Options) {
+            let option = new Option(this.Options[i].text, this.Options[i].value);
             options.push(option);
         }
         this.renderedOptions = options;
