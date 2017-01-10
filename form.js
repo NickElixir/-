@@ -47,14 +47,18 @@ class Form {
     }
 }
 class Input {
-    constructor(name, header, options) {
+    constructor(name, header, options, parent) {
         this.name = name;
-        this.type = "text"; 
+        if (!this.type) {
+            this.type = "text";
+        }
         this.header = header;
         if (options) {
             this.options = options;
         }
-        this.render();
+        if (!parent) {
+            this.render();
+        }
     }
     render() {
         let input = document.createElement("input");
@@ -70,7 +74,7 @@ class Input {
 }
 class Num extends Input {
     constructor(name, header, options) {
-        super(name, header, options);
+        super(name, header, options, true);
         this.type = "number";
         this.render();
     }
@@ -80,7 +84,7 @@ class Num extends Input {
 }
 class Checkbox extends Input {
     constructor(name, header, options) {
-        super(name, header, options);
+        super(name, header, options, true);
         this.type = "checkbox";
         this.render();
     }
@@ -90,7 +94,7 @@ class Checkbox extends Input {
 }
 class Radio extends Input {
     constructor(name, text, options) {
-        super(name, text, options);
+        super(name, text, options, true);
         this.type = "radio";
         this.render();
     }
@@ -125,7 +129,7 @@ class RadioList {
 }
 class Submit extends Input {
     constructor(name, header, options) {
-        super(name, header, options);
+        super(name, header, options, true);
         this.type = "submit";
         this.render();
     }
@@ -157,5 +161,15 @@ class Select {
             options.push(option);
         }
         this.renderedOptions = options;
+    }
+}
+class Search extends Input {
+    constructor(name, header, options) {
+        super(name, header, options, true);
+        this.type = "search";
+        this.render();
+    }
+    render() {
+        super.render();
     }
 }
