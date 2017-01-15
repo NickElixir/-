@@ -4,8 +4,8 @@
     <meta charset="utf-8" name=viewport content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="style.css">
     <link href="fonts/Roboto_Condensed/font.css" rel="stylesheet">
-    <!--<script src="form.js"></script>-->
-    <script src="C:\Users\Николай Луценко\Documents\GitHub\form.js"></script>
+    <script src="form.js"></script>
+    <!--<script src="C:\Users\Николай Луценко\Documents\GitHub\form.js"></script>-->
     <script src="note.js"></script>
   </head>
   <body>
@@ -17,8 +17,8 @@
             this.name = name;
             this.shelfLife = shelfLife;
             this.count = count;
-            this.datePurchase = new Date().getTime();
-            this.datePurchase = this.datePurchase - (this.datePurchase % 86400000);
+            this.datePurchase = new Date();
+            this.datePurchase.setHours(0, 0, 0, 0);
             this.countType = document.forms.addProduct.elements.countType.value;
             this.frozen = document.forms.addProduct.elements.checkFrozen.checked;
             this.index = arrProducts.length;
@@ -95,6 +95,11 @@
             let tr = createTrProduct(arrProducts, obj.index);
             document.querySelector(".arr-products tbody").appendChild(tr);
             alert("Продукт успешно добавлен");
+            if (!localStorage._checker) {
+              let time = new Date();
+              time.setHours(0, 0, 0, 0);
+              localStorage._checker = time;
+            }
           }
           deleteProduct(index){
             arrProducts.splice(index, 1);
@@ -306,13 +311,15 @@
             return;
           }
           let nowDay = new Date();
-          nowDay = nowDay.getTime();
-          nowDay = nowDay - (nowDay % 86400000);
-          console.log(localStorage._checker + " " + nowDay);
-          if (parseInt(localStorage._checker) !== nowDay) {
+          nowDay.setHours(0, 0, 0, 0);
+          let checker = new Date(localStorage._checker);
+          console.log(checker + " " + nowDay);
+          if (parseInt(checker.getTime()) !== nowDay.getTime()) {
             for(let i = 0; i < arrProducts.length; i++) {
-              let difference = nowDay - arrProducts[i].datePurchase;
+              let difference = nowDay.getTime() - checker.getTime();
               difference = difference/86400000;
+              console.log("Difference - " + difference); 
+              console.log("Current shelf life - " + arrProducts[i].shelfLife);
               arrProducts[i].shelfLife = arrProducts[i].shelfLife - difference;
             }
             localStorage.arrProducts = JSON.stringify(arrProducts);
@@ -479,8 +486,7 @@
           if (confidence) {
             if (!localStorage._checker) {
             let time = new Date();
-            time = time.getTime();
-            time = time - (time % 86400000);
+            time.setHours(0, 0, 0, 0);
             localStorage._checker = time;
             }
             let switches = document.body.querySelectorAll(".switch");

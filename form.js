@@ -104,7 +104,11 @@ class Radio extends Input {
         super.render();
         let input = this.elem;
         input.type = this.type;
-        input.value = this.value;
+        if(this.options) {
+            for (let i in this.options) {
+                input.setAttribute(i, this.options[i]);
+            } 
+        }
         p.appendChild(input);
         p.appendChild(document.createTextNode(this.header));
         p.addEventListener("click", focusRadioParagraph);
