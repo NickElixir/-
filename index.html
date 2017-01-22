@@ -31,7 +31,6 @@
             let name = document.forms.createProduct.elements.name1.value;
             let shelfLifeFrozen = parseInt(document.forms.createProduct.elements.defaultShelfLifeFrozen.value);
             let shelfLifeNotFrozen = parseInt(document.forms.createProduct.elements.defaultShelfLifeNotFrozen.value);
-            console.log(name + " " + shelfLifeFrozen + " " + shelfLifeNotFrozen);
             if (!name || !isNumeric(shelfLifeFrozen) || !isNumeric(shelfLifeNotFrozen)) {
               alert("Форма заполнена неправильно");
               return;
@@ -45,8 +44,19 @@
             }
             if (a) {
               productsCollection[name] =  {shelfLifeFrozen: shelfLifeFrozen, shelfLifeNotFrozen: shelfLifeNotFrozen, numberAdditions: 0};
+              let arr = [];
+              let obj = productsCollection;
+              for (let i in obj) {
+                obj[i].name = i;
+                arr.push(obj[i]);
+              }
+              arr = sortProducts(arr, "name");
+              productsCollection = {};
+              for (let i in arr) {
+                productsCollection[arr[i].name] = arr[i];
+                delete productsCollection[arr[i].name].name;
+              }
               localStorage.productsCollection = JSON.stringify(productsCollection);
-              //let arr = sortProducts(productsCollection, "name");
               let select = document.querySelector("#form select");
               select.innerHTML = "";
               for (let i in productsCollection) {
@@ -155,11 +165,11 @@
         }
         function sortProducts(arr, method) {
           if (method == "name") {
-            arr.sort(function (a, b) {
-              if (a.name.toUpperCase() < b.name.toUpperCase()) {
+            [].sort.call(arr, function (a, b) {
+              if (a.name < b.name) {
                 return -1;
               }
-              if (a.name.toUpperCase() > b.name.toUpperCase()) {
+              if (a.name > b.name) {
                 return 1;
               }
               // names must be equal
@@ -277,29 +287,27 @@
             event.target.children[0].checked = true;
           }
         }
-        function changeShelfLifeValue() {
-            /* let product = productsCollection[0];
-            if (!product) {
-              return;
-            }
-            let i = 0;
-            let selected = document.forms[1].elements.name2.value;
-            while (selected !== product.name) {
-              i++;
-              product = productsCollection[i];
-            } */
-            if (productsCollection) {
+        function changeShelfLifeValue(event) {
+          if (productsCollection) {
+            if (event.target.tagName = "select") {
               for (let i in productsCollection) {
                 if (i == document.forms.addProduct.elements.name2.value) {
                   if (document.forms.addProduct.elements.checkFrozen.checked) {
-                    document.forms.addProduct.elements.shelfLife.value = product.shelfLifeFrozen;
+                    document.forms.addProduct.elements.shelfLife.value = productsCollection[i].shelfLifeFrozen;
                   } else {
-                    document.forms.addProduct.elements.shelfLife.value = product.shelfLifeNotFrozen;
+                    document.forms.addProduct.elements.shelfLife.value = productsCollection[i].shelfLifeNotFrozen;
                   }
                   break;
                 }
               }
+            } else {
+              if (document.forms.addProduct.elements.checkFrozen.checked) {
+                document.forms.addProduct.elements.shelfLife.value = productsCollection[i].shelfLifeFrozen;
+              } else {
+                document.forms.addProduct.elements.shelfLife.value = productsCollection[i].shelfLifeNotFrozen;
+              }
             }
+          }
         }
         function createProductForm() {
           let elements = [new Input("name1", "Название продукта"), new Note("Примечание", "Лучше указать запись вида: род + вид. Желательно использовать множественное число."), new Num("defaultShelfLifeFrozen", "Срок годности в холодильнике", {min: 0}), new Num("defaultShelfLifeNotFrozen", "Срок годности при комнатной температуре", {min: 0})];
@@ -312,28 +320,20 @@
             options.push(option);
           }
           let select = new Select("name2", options, "Название продукта");
+          select.elem.addEventListener("blur", changeShelfLifeValue);
           let shelfLife = new Num("shelfLife", "Текущий срок годности");
-          /* if (productsCollection[0]) { //automatic upload shelf life from productsCollection
-            let i = 0;
-            let selected = select.elem.value;
-            let product = productsCollection[i];
-            while (selected !== product.name) {
-              i++;
-              product = productsCollection[i];
-            }
-            shelfLife.elem.value = product.shelfLifeFrozen;
-          }
-          */
           if (productsCollection) {
-              for (let i in productsCollection) {
-                if (i == select.elem.value) {
-                  shelfLife.elem.value = productsCollection[i].shelfLifeFrozen;
-                  break;
-                }
+            for (let i in productsCollection) {
+              if (i == select.elem.value) {
+                shelfLife.elem.value = productsCollection[i].shelfLifeFrozen;
+                break;
               }
             }
+          }
+          let checkbox = new Checkbox("checkFrozen", "Продукт в холодильнике или нет?");
+          checkbox.elem.addEventListener("blur", changeShelfLifeValue);
           let radio = [{name: "countType", header: "ШТ", value: "ШТ"}, {name: "countType", header: "КГ", value: "КГ"}, {name: "countType", header: "Г", value: "Г"}];
-          let elements = [select, new Checkbox("checkFrozen", "Продукт в холодильнике или нет?"), shelfLife, new Num("count", "Количество"), new RadioList("Единица измерения", radio)]
+          let elements = [select, checkbox, shelfLife, new Num("count", "Количество"), new RadioList("Единица измерения", radio)]
           return new Form("addProduct", elements, "Добавить продукт", Product.prototype.addProduct, new Submit("submit", "Отправить"));
         }
         function createSectionFormProduct() {
