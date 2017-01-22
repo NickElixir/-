@@ -47,7 +47,7 @@ class Form {
     }
 }
 class Input {
-    constructor(name, header, options, parent) {
+    constructor(name, header, options, parent) { //parent - родитель или нет (есть наследник-класс или нет).
         this.name = name;
         if (!this.type) {
             this.type = "text";

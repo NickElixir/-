@@ -7,11 +7,14 @@
     <script src="form.js"></script>
     <!--<script src="C:\Users\Николай Луценко\Documents\GitHub\form.js"></script>-->
     <script src="note.js"></script>
+    <script src="switch.js"></script>
+    <script src="table.js"></script>
   </head>
   <body>
     <script>
         var arrProducts = localStorage.arrProducts ? JSON.parse(localStorage.arrProducts) : [];
-        var arrProductsCollection = localStorage.arrProductsCollection ? JSON.parse(localStorage.arrProductsCollection) : [];
+        var productsCollection = localStorage.productsCollection ? JSON.parse(localStorage.productsCollection) : {};
+        var shoppingLists = localStorage.shoppingLists ? JSON.parse(localStorage.shoppingLists) : {};
         class Product {
           constructor(name, shelfLife, count) {
             this.name = name;
@@ -28,29 +31,26 @@
             let name = document.forms.createProduct.elements.name1.value;
             let shelfLifeFrozen = parseInt(document.forms.createProduct.elements.defaultShelfLifeFrozen.value);
             let shelfLifeNotFrozen = parseInt(document.forms.createProduct.elements.defaultShelfLifeNotFrozen.value);
+            console.log(name + " " + shelfLifeFrozen + " " + shelfLifeNotFrozen);
             if (!name || !isNumeric(shelfLifeFrozen) || !isNumeric(shelfLifeNotFrozen)) {
               alert("Форма заполнена неправильно");
               return;
             }
             name = name.toUpperCase();
             let a = true;
-            for (let i = 0; i < arrProductsCollection.length; i++) {
-              if (arrProductsCollection[i].name.toUpperCase() == name) {
+            for (let i in productsCollection) {
+              if (i == name) {
                 a = false;
               }
             }
             if (a) {
-              let object = {};
-              object.name = name;
-              object.shelfLifeFrozen = shelfLifeFrozen;
-              object.shelfLifeNotFrozen = shelfLifeNotFrozen;
-              arrProductsCollection.push(object);
-              localStorage.arrProductsCollection = JSON.stringify(arrProductsCollection);
-              let arr = sortProducts(arrProductsCollection, "name");
+              productsCollection[name] =  {shelfLifeFrozen: shelfLifeFrozen, shelfLifeNotFrozen: shelfLifeNotFrozen, numberAdditions: 0};
+              localStorage.productsCollection = JSON.stringify(productsCollection);
+              //let arr = sortProducts(productsCollection, "name");
               let select = document.querySelector("#form select");
               select.innerHTML = "";
-              for (let i = 0; i < arr.length; i++) {
-                let option = new Option(arr[i].name, arr[i].name);
+              for (let i in productsCollection) {
+                let option = new Option(i, i);
                 select.appendChild(option);
               }
               alert("Продукт успешно добавлен в коллекцию");
@@ -106,6 +106,28 @@
             for (let i = index; i < arrProducts.length; i++) {
               arrProducts[i].index -= 1;
             }
+          }
+        }
+        class ShoppingListItem extends Tr {
+          constructor(name, count, options) {
+            super("tr", [{innerHTML: new Switch({select: "off"}).elem.outerHTML}, {innerHTML: name}, {innerHTML: count}], options)
+          }
+          render() {
+            super.render();
+          }
+        }
+        class ShoppingList extends Table {
+          constructor(header, elements, options) {
+            this.header = header;
+            super();
+          }
+          render() {
+            super.render();
+          }
+          addItem(name, count) {
+            let item = new ShoppingListItem(name, count);
+            this.elements.push(item);
+            this.render();
           }
         }
         function getRandomInt(min, max) {
@@ -256,7 +278,7 @@
           }
         }
         function changeShelfLifeValue() {
-            let product = arrProductsCollection[0];
+            /* let product = productsCollection[0];
             if (!product) {
               return;
             }
@@ -264,12 +286,19 @@
             let selected = document.forms[1].elements.name2.value;
             while (selected !== product.name) {
               i++;
-              product = arrProductsCollection[i];
-            }
-            if (document.forms[1].elements.checkFrozen.checked) {
-              document.forms[1].elements.shelfLife.value = product.shelfLifeFrozen;
-            } else {
-              document.forms[1].elements.shelfLife.value = product.shelfLifeNotFrozen;
+              product = productsCollection[i];
+            } */
+            if (productsCollection) {
+              for (let i in productsCollection) {
+                if (i == document.forms.addProduct.elements.name2.value) {
+                  if (document.forms.addProduct.elements.checkFrozen.checked) {
+                    document.forms.addProduct.elements.shelfLife.value = product.shelfLifeFrozen;
+                  } else {
+                    document.forms.addProduct.elements.shelfLife.value = product.shelfLifeNotFrozen;
+                  }
+                  break;
+                }
+              }
             }
         }
         function createProductForm() {
@@ -278,22 +307,31 @@
         }
         function addProductForm() {
           let options = [];
-          for (let i = 0; i < arrProductsCollection.length; i++) {
-            let option = {text: arrProductsCollection[i].name, value: arrProductsCollection[i].name};
+          for (let i in productsCollection) {
+            let option = {text: i, value: i};
             options.push(option);
           }
           let select = new Select("name2", options, "Название продукта");
           let shelfLife = new Num("shelfLife", "Текущий срок годности");
-          if (arrProductsCollection[0]) { //automatic upload shelf life from arrProductsCollection
+          /* if (productsCollection[0]) { //automatic upload shelf life from productsCollection
             let i = 0;
             let selected = select.elem.value;
-            let product = arrProductsCollection[i];
+            let product = productsCollection[i];
             while (selected !== product.name) {
               i++;
-              product = arrProductsCollection[i];
+              product = productsCollection[i];
             }
             shelfLife.elem.value = product.shelfLifeFrozen;
           }
+          */
+          if (productsCollection) {
+              for (let i in productsCollection) {
+                if (i == select.elem.value) {
+                  shelfLife.elem.value = productsCollection[i].shelfLifeFrozen;
+                  break;
+                }
+              }
+            }
           let radio = [{name: "countType", header: "ШТ", value: "ШТ"}, {name: "countType", header: "КГ", value: "КГ"}, {name: "countType", header: "Г", value: "Г"}];
           let elements = [select, new Checkbox("checkFrozen", "Продукт в холодильнике или нет?"), shelfLife, new Num("count", "Количество"), new RadioList("Единица измерения", radio)]
           return new Form("addProduct", elements, "Добавить продукт", Product.prototype.addProduct, new Submit("submit", "Отправить"));
@@ -344,7 +382,7 @@
           createTd("<p>" + arr[i].name + "</p>");
           createTd("<p>" + arr[i].shelfLife + " дн</p>");
           createTd("<p>" + arr[i].count + " " + arr[i].countType + "</p>");
-          createTd("<div class='switch' select='off' index='" + arr[i].index + "' count='0'></div>");
+          createTd(new Switch({select: "off", index: arr[i].index, count: 0}).elem.outerHTML);
           if (arr[i].frozen) {
             tr.className = "frozen";
           }
@@ -525,7 +563,7 @@
               },1100)
             }
           localStorage.arrProducts = JSON.stringify(arrProducts);
-          localStorage.arrProductsCollection = JSON.stringify(arrProductsCollection);
+          localStorage.productsCollection = JSON.stringify(productsCollection);
           }
         }
         function createButtonSaveChanges() {
@@ -555,6 +593,14 @@
           p.innerHTML = "При нажатии на заголовок колонки можно отсортировать таблицу по соответстующей характеристике.";
           section.appendChild(p);
           div.appendChild(section);
+        }
+        function createShoppingListSection() {
+          let section = document.createElement("section");
+          section.setAttribute("id", "create-shopping-list");
+          section.className("invisible");
+		      let form = new Form("createShoppingList", [new Input("shoppingListName", "Название")], "Создать список продуктов");
+          section.appendChild(form.elem);
+
         }
         updateShelfLifes();
         createMenu();
