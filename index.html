@@ -93,7 +93,9 @@
                   localStorage.arrProducts = JSON.stringify(arrProducts);
                   let tr = document.querySelectorAll(".arr-products tr");
                   tr[i].children[2].innerHTML = product.count + " " + product.countType;
-                  alert("Продукт успешкно добавлен");
+                  alert("Продукт успешно добавлен");
+                  productsCollection[product.name].numberAdditions++;
+                  localStorage.productsCollection = JSON.stringify(productsCollection);
                   return;
                 }
                 i++;
@@ -104,6 +106,8 @@
             localStorage.arrProducts = JSON.stringify(arrProducts);
             let tr = createTrProduct(arrProducts, obj.index);
             document.querySelector(".arr-products tbody").appendChild(tr);
+            productsCollection[name].numberAdditions++;
+            localStorage.productsCollection = JSON.stringify(productsCollection);
             alert("Продукт успешно добавлен");
             if (!localStorage._checker) {
               let time = new Date();
@@ -330,7 +334,7 @@
               }
             }
           }
-          let checkbox = new Checkbox("checkFrozen", "Продукт в холодильнике или нет?");
+          let checkbox = new Checkbox("checkFrozen", "Продукт в холодильнике?");
           checkbox.elem.addEventListener("blur", changeShelfLifeValue);
           let radio = [{name: "countType", header: "ШТ", value: "ШТ"}, {name: "countType", header: "КГ", value: "КГ"}, {name: "countType", header: "Г", value: "Г"}];
           let elements = [select, checkbox, shelfLife, new Num("count", "Количество"), new RadioList("Единица измерения", radio)]
