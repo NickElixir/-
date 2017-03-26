@@ -194,12 +194,16 @@
             let kg = [];
             let g = [];
             for (let i = 0; i < arr.length; i++) {
-              if (arr[i].countType === "ШТ") {
-                pieces.push(arr[i]);
-              } else if (arr[i].countType === "КГ") {
-                kg.push(arr[i]);
-              } else if (arr[i].countType === "Г") {
-                g.push(arr[i]);
+              switch(arr[i].countType) {
+                case "ШТ":
+                  pieces.push(arr[i]);
+                  break;
+                case "КГ":
+                  kg.push(arr[i]);
+                  break;
+                case "Г":
+                  g.push(arr[i]);
+                  break;
               }
             }
             function sortCount(a, b) {
