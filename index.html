@@ -4,284 +4,48 @@
     <meta charset="utf-8" name=viewport content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="style.css">
     <link href="fonts/Roboto_Condensed/font.css" rel="stylesheet">
+    <script src="element.js"></script>
     <script src="form.js"></script>
     <!--<script src="C:\Users\Николай Луценко\Documents\GitHub\form.js"></script>-->
     <script src="note.js"></script>
     <script src="switch.js"></script>
     <script src="table.js"></script>
+	<script src="list.js"></script>
+	<script src="menu.js"></script>
+    <script src="product.js"></script>
   </head>
   <body>
     <script>
         var arrProducts = localStorage.arrProducts ? JSON.parse(localStorage.arrProducts) : [];
         var productsCollection = localStorage.productsCollection ? JSON.parse(localStorage.productsCollection) : {};
         var shoppingLists = localStorage.shoppingLists ? JSON.parse(localStorage.shoppingLists) : {};
-        class Product {
-          constructor(name, shelfLife, count) {
-            this.name = name;
-            this.shelfLife = shelfLife;
-            this.count = count;
-            this.datePurchase = new Date();
-            this.datePurchase.setHours(0, 0, 0, 0);
-            this.countType = document.forms.addProduct.elements.countType.value;
-            this.frozen = document.forms.addProduct.elements.checkFrozen.checked;
-            this.index = arrProducts.length;
-          }
-          createProduct(event) {
-            event.preventDefault();
-            let name = document.forms.createProduct.elements.name1.value;
-            let shelfLifeFrozen = parseInt(document.forms.createProduct.elements.defaultShelfLifeFrozen.value);
-            let shelfLifeNotFrozen = parseInt(document.forms.createProduct.elements.defaultShelfLifeNotFrozen.value);
-            if (!name || !isNumeric(shelfLifeFrozen) || !isNumeric(shelfLifeNotFrozen)) {
-              alert("Форма заполнена неправильно");
-              return;
-            }
-            name = name.toUpperCase();
-            let a = true;
-            for (let i in productsCollection) {
-              if (i == name) {
-                a = false;
-              }
-            }
-            if (a) {
-              productsCollection[name] =  {shelfLifeFrozen: shelfLifeFrozen, shelfLifeNotFrozen: shelfLifeNotFrozen, numberAdditions: 0};
-              let arr = [];
-              let obj = productsCollection;
-              for (let i in obj) {
-                obj[i].name = i;
-                arr.push(obj[i]);
-              }
-              arr = sortProducts(arr, "name");
-              productsCollection = {};
-              for (let i in arr) {
-                productsCollection[arr[i].name] = arr[i];
-                delete productsCollection[arr[i].name].name;
-              }
-              localStorage.productsCollection = JSON.stringify(productsCollection);
-              let select = document.querySelector("#form select");
-              select.innerHTML = "";
-              for (let i in productsCollection) {
-                let option = new Option(i, i);
-                select.appendChild(option);
-              }
-              alert("Продукт успешно добавлен в коллекцию");
-            } else {
-            alert("В коллекции уже есть продукт с таким именем");
-            }
-          }
-          addProduct(event) {
-            if (!document.forms.addProduct.elements.countType.value) {
-              alert("Не указана единица измерения. Исправьте, и повторите попытку.");
-              return;
-            }
-            event.preventDefault();
-            let name = document.forms.addProduct.elements.name2.value;
-            let count = parseFloat(document.forms.addProduct.elements.count.value);
-            if (count <= 0 || !isNumeric(count)) {
-              alert("Количество не может быть меньше или равно 0");
-              return;
-            }
-            let shelfLife = parseInt(document.forms.addProduct.elements.shelfLife.value);
-            let i = 0;
-            let product = arrProducts[i];
-            while (i < arrProducts.length) {
-              if (product.name !== name) {
-                i++;
-                product = arrProducts[i];
-              } else {
-                if (product.shelfLife == shelfLife) {
-                  product.count += count;
-                  localStorage.arrProducts = JSON.stringify(arrProducts);
-                  let tr = document.querySelectorAll(".arr-products tr");
-                  tr[i].children[2].innerHTML = product.count + " " + product.countType;
-                  alert("Продукт успешно добавлен");
-                  productsCollection[product.name].numberAdditions++;
-                  localStorage.productsCollection = JSON.stringify(productsCollection);
-                  return;
-                }
-                i++;
-              }
-            }
-            let obj = new Product(name, shelfLife, count);
-            arrProducts.push(obj);
-            localStorage.arrProducts = JSON.stringify(arrProducts);
-            let tr = createTrProduct(arrProducts, obj.index);
-            document.querySelector(".arr-products tbody").appendChild(tr);
-            productsCollection[name].numberAdditions++;
-            localStorage.productsCollection = JSON.stringify(productsCollection);
-            alert("Продукт успешно добавлен");
-            if (!localStorage._checker) {
-              let time = new Date();
-              time.setHours(0, 0, 0, 0);
-              localStorage._checker = time;
-            }
-          }
-          deleteProduct(index){
-            arrProducts.splice(index, 1);
-            for (let i = index; i < arrProducts.length; i++) {
-              arrProducts[i].index -= 1;
-            }
-          }
-        }
-        class ShoppingListItem extends Tr {
-          constructor(name, count, options) {
-            super("tr", [{innerHTML: new Switch({select: "off"}).elem.outerHTML}, {innerHTML: name}, {innerHTML: count}], options)
-          }
-          render() {
-            super.render();
-          }
-        }
-        class ShoppingList extends Table {
-          constructor(header, elements, options) {
-            this.header = header;
-            super();
-          }
-          render() {
-            super.render();
-          }
-          addItem(name, count) {
-            let item = new ShoppingListItem(name, count);
-            this.elements.push(item);
-            this.render();
-          }
-        }
         function getRandomInt(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
-        function fadeOut(time){ 
-        let EndTime = Date.now() + time;
-        let _this = this;
-        handler();
-        function handler(){
-            let now = Date.now();
-            let step = EndTime - now;
-            if(step/time < 0 ){
-                _this.style.opacity = 0;
-                return;            
+        function fadeOut(time) { 
+          let EndTime = Date.now() + time;
+          let _this = this;
+          handler();
+          function handler(){
+              let now = Date.now();
+              let step = EndTime - now;
+              if(step/time < 0 ){
+                  _this.style.opacity = 0;
+                  return;            
+              }
+                else
+            _this.style.opacity = (step/time);
+              setTimeout(handler,0);
             }
-              else
-          _this.style.opacity = (step/time);
-            setTimeout(handler,0);
-          }
         }
-        Element.prototype.fadeOut = fadeOut;
         function isNumeric(n) {
-          return !isNaN(parseFloat(n)) && isFinite(n);
-        }
-        function sortProducts(arr, method) {
-          if (method == "name") {
-            [].sort.call(arr, function (a, b) {
-              if (a.name < b.name) {
-                return -1;
-              }
-              if (a.name > b.name) {
-                return 1;
-              }
-              // names must be equal
-              return 0;
-            });
-          } else if (method == "shelfLife") {
-            arr.sort(function(a, b) {
-              if (a.shelfLife < b.shelfLife) {
-                return -1;
-              }
-              if (a.shelfLife > b.shelfLife) {
-                return 1;
-              }
-              return 0;
-            });
-          } else if (method == "count") {
-            let pieces = [];
-            let kg = [];
-            let g = [];
-            for (let i = 0; i < arr.length; i++) {
-              switch(arr[i].countType) {
-                case "ШТ":
-                  pieces.push(arr[i]);
-                  break;
-                case "КГ":
-                  kg.push(arr[i]);
-                  break;
-                case "Г":
-                  g.push(arr[i]);
-                  break;
-              }
-            }
-            function sortCount(a, b) {
-              if (a.count < b.count) {
-                return -1;
-              }
-              if (a.count > b.count) {
-                return 1;
-              }
-              return 0;
-            }
-            pieces.sort(sortCount);
-            kg.sort(sortCount);
-            g.sort(sortCount);
-            arr = [];
-            function add(a) {
-              for (let i = 0; i < a.length; i++) {
-                arr.push(a[i]);
-              }
-            }
-            add(pieces);
-            add(kg);
-            add(g);
-          }
-          return arr;
+        	return !isNaN(parseFloat(n)) && isFinite(n);
         }
         function createDivContainer() {
-          let div = document.createElement("div");
-          div.className = "container";
-          document.body.appendChild(div);
-        }
-        function selectSection(event) {
-          if (document.body.querySelector(".visible")) {
-            document.body.querySelector(".visible").className = "invisible";
-            document.body.querySelector("#" + event.target.getAttribute("key")).className = "visible";
-            if (document.body.clientWidth < 768) {
-              document.querySelector("body").classList.toggle("navOpen");
-              document.querySelector("nav").classList.toggle("open");
-              document.querySelector(".container").classList.toggle("open");
-              document.querySelector(".openNav").classList.toggle("open");
-            }
-          }
+			document.body.appendChild(new Element("div", {class: "container"}).elem);
         }
         function createMenu() {
-          let section = document.createElement("section");
-          section.className = "menu";
-          let nav = document.createElement("nav");
-          let ul = document.createElement("ul");
-          let main = document.createElement("li");
-          main.innerHTML = "Главная";
-          main.setAttribute("key", "main");
-          main.addEventListener("click", selectSection);
-          ul.appendChild(main);
-          let form = document.createElement("li");
-          form.innerHTML = "Добавить продукт";
-          form.setAttribute("key", "form");
-          form.addEventListener("click", selectSection);
-          ul.appendChild(form);
-          let about = document.createElement("li");
-          about.innerHTML = "О сервисе";
-          about.setAttribute("key", "about");
-          about.addEventListener("click", selectSection);
-          ul.appendChild(about);
-          nav.appendChild(ul);
-          section.appendChild(nav);
-          let openNav = document.createElement("div");
-          openNav.className = "openNav";
-          openNav.addEventListener("click", function(){
-            document.querySelector("body").classList.toggle("navOpen");
-            document.querySelector("nav").classList.toggle("open");
-            document.querySelector(".container").classList.toggle("open");
-            openNav.classList.toggle("open");
-          });
-          let icon = document.createElement("div");
-          icon.className = "icon";
-          openNav.appendChild(icon);
-          section.appendChild(openNav);
-          document.body.appendChild(section);
+		  document.body.appendChild(new Menu([new Li("Главная", {key: "main"}), new Li("Добавить продукт", {key: "form"}), new Li("О сервисе", {key: "about"})]).elem);
         }
         function showComment(event) {
           let target = event.target;
@@ -316,41 +80,6 @@
               }
             }
           }
-        }
-        function createProductForm() {
-          let elements = [new Input("name1", "Название продукта"), new Note("Примечание", "Лучше указать запись вида: род + вид. Желательно использовать множественное число."), new Num("defaultShelfLifeFrozen", "Срок годности в холодильнике", {min: 0}), new Num("defaultShelfLifeNotFrozen", "Срок годности при комнатной температуре", {min: 0})];
-          return new Form("createProduct", elements, "Добавить новый продукт в коллекцию", Product.prototype.createProduct, new Submit("submit", "Отправить"));
-        }
-        function addProductForm() {
-          let options = [];
-          for (let i in productsCollection) {
-            let option = {text: i, value: i};
-            options.push(option);
-          }
-          let select = new Select("name2", options, "Название продукта");
-          select.elem.addEventListener("blur", changeShelfLifeValue);
-          let shelfLife = new Num("shelfLife", "Текущий срок годности");
-          if (productsCollection) {
-            for (let i in productsCollection) {
-              if (i == select.elem.value) {
-                shelfLife.elem.value = productsCollection[i].shelfLifeFrozen;
-                break;
-              }
-            }
-          }
-          let checkbox = new Checkbox("checkFrozen", "Продукт в холодильнике?");
-          checkbox.elem.addEventListener("blur", changeShelfLifeValue);
-          let radio = [{name: "countType", header: "ШТ", value: "ШТ"}, {name: "countType", header: "КГ", value: "КГ"}, {name: "countType", header: "Г", value: "Г"}];
-          let elements = [select, checkbox, shelfLife, new Num("count", "Количество"), new RadioList("Единица измерения", radio)]
-          return new Form("addProduct", elements, "Добавить продукт", Product.prototype.addProduct, new Submit("submit", "Отправить"));
-        }
-        function createSectionFormProduct() {
-          let section = document.createElement("section");
-          section.setAttribute("id", "form");
-          section.appendChild(createProductForm().elem);
-          section.appendChild(addProductForm().elem);
-          section.className = "invisible";
-          document.body.querySelector(".container").appendChild(section);
         }
         function updateShelfLifes() {
           if (!localStorage._checker) {
@@ -557,7 +286,7 @@
             if(toTrash.length){
               toTrash.reverse().forEach(i=>{
                 Product.prototype.deleteProduct(i);
-                switches[i].closest('tr').fadeOut(500); 
+                fadeOut.call(switches[i].closest('tr'), 500);
                 setTimeout(function() {
                   switches[i].closest('tr').remove(); 
                 }, 600);
@@ -614,7 +343,8 @@
         createMenu();
         createDivContainer();
         writeProducts();
-        createSectionFormProduct();
+		//Form for creating and adding products
+        document.body.querySelector(".container").appendChild(new Element("section", {id: "form", class: "invisible"}, [Form.createProduct(), Form.addProduct()]).elem);
         createAbout();
         console.log(performance.now());
     </script>

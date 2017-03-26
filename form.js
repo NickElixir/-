@@ -42,6 +42,31 @@ class Form {
         form.appendChild(this.submitElem.elem);
         this.elem = form;
     }
+    static createProduct() {
+        return new Form("createProduct", [new Input("name1", "Название продукта"), new Note("Примечание", "Лучше указать запись вида: род + вид. Желательно использовать множественное число."), new Num("defaultShelfLifeFrozen", "Срок годности в холодильнике", {min: 0}), new Num("defaultShelfLifeNotFrozen", "Срок годности при комнатной температуре", {min: 0})], "Добавить новый продукт в коллекцию", Product.prototype.createProduct, new Submit("submit", "Отправить"));
+    }
+    static addProduct() {
+          let options = [];
+          for (let i in productsCollection) {
+            let option = {text: i, value: i};
+            options.push(option);
+          }
+          let select = new Select("name2", options, "Название продукта");
+          select.elem.addEventListener("blur", changeShelfLifeValue);
+          let shelfLife = new Num("shelfLife", "Текущий срок годности");
+          if (productsCollection) {
+            for (let i in productsCollection) {
+              if (i == select.elem.value) {
+                shelfLife.elem.value = productsCollection[i].shelfLifeFrozen;
+                break;
+              }
+            }
+          }
+          let checkbox = new Checkbox("checkFrozen", "Продукт в холодильнике?");
+          checkbox.elem.addEventListener("blur", changeShelfLifeValue);
+          let elements = [select, checkbox, shelfLife, new Num("count", "Количество"), new RadioList("Единица измерения", [{name: "countType", header: "ШТ", value: "ШТ"}, {name: "countType", header: "КГ", value: "КГ"}, {name: "countType", header: "Г", value: "Г"}])]
+          return new Form("addProduct", elements, "Добавить продукт", Product.prototype.addProduct, new Submit("submit", "Отправить"));
+        }
 }
 class Input extends Element{
     constructor(name, header, options, parent) {
