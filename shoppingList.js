@@ -1,8 +1,11 @@
-class ShoppingListItem extends Th_Tr {
+class ShoppingListItem extends Tr {
     constructor(name, count, options) {
+        super();
     }
     render() {
+        super.render();
     }
+}
 class ShoppingList extends Table {
     constructor(header, elements, options) {
         this.header = header;

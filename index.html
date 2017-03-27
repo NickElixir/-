@@ -82,15 +82,13 @@
           }
         }
         function updateShelfLifes() {
-          if (!localStorage._checker) {
-            return;
-          }
+          if (!localStorage._checker) return;
           let nowDay = new Date();
           nowDay.setHours(0, 0, 0, 0);
           let checker = new Date(localStorage._checker);
           console.log(checker + " " + nowDay);
           if (parseInt(checker.getTime()) !== nowDay.getTime()) {
-            for(let i = 0; i < arrProducts.length; i++) {
+            for (let i = 0; i < arrProducts.length; i++) {
               let difference = nowDay.getTime() - checker.getTime();
               difference = difference/86400000;
               console.log("Difference - " + difference); 
@@ -101,33 +99,8 @@
             localStorage._checker = nowDay;
           }
         }
-        function createTbodyProducts(arr) {
-          let tbody = document.createElement("tbody");
-          for (let i = 0; i < arr.length; i++) {
-            tbody.appendChild(createTrProduct(arr, i));
-          }
-          return tbody;
-        }
-        function createTrProduct(arr, i) {
-          let tr = document.createElement("tr");
-          tr.setAttribute("index", arr[i].index);
-          function createTd(content) {
-            let td = document.createElement("td");
-            td.innerHTML = content;
-            tr.appendChild(td);
-          }
-          createTd("<p>" + arr[i].name + "</p>");
-          createTd("<p>" + arr[i].shelfLife + " дн</p>");
-          createTd("<p>" + arr[i].count + " " + arr[i].countType + "</p>");
-          createTd(new Switch({select: "off", index: arr[i].index, count: 0}).elem.outerHTML);
-          if (arr[i].frozen) {
-            tr.className = "frozen";
-          }
-          return tr;
-        }
         function sortTableProducts(event) {
           if (document.querySelector(".arr-products tbody")) {
-
             switch (event.target.innerHTML[0]) {
               case "Р":
                 var arr = sortProducts(arrProducts, "name");
@@ -139,32 +112,17 @@
                 var arr = sortProducts(arrProducts, "count");
                 break;
             }
-            let tbody = createTbodyProducts(arr);
             let table = document.querySelector(".arr-products");
             table.removeChild(table.querySelector("tbody"));
-            table.appendChild(tbody);
+            table.appendChild(Tbody.products(arr).elem);
           }
         }
         function createTableProducts(arr) {
-          let table = document.createElement("table");
-          table.setAttribute("cellspacing", "0");
-          let thead = document.createElement("thead");
-          function createTh(content) {
-            let th = document.createElement("th");
-            th.innerHTML = content;
-            th.firstChild.addEventListener("click", sortTableProducts);
-            thead.appendChild(th); 
-          }
-          createTh("<p>Род и вид</p>");
-          createTh("<p>Срок годности</p>");
-          createTh("<p>Количество</p>");
-          thead.children[2].setAttribute("colspan", 2);
-          table.appendChild(thead);
-          let tbody = createTbodyProducts(arr);
-          table.appendChild(tbody);
-          table.className = "arr-products";
-          table.addEventListener("click", toggleChoiceButton);
-          return table;
+			let thead = new Tbody("thead", [new Td("th", "Род и вид"), new Td("th", "Срок годности"), new Td("th", "Количество", {colspan: 2})]);
+			for (let i in thead.children) thead.children[i].addEventListener("click", sortTableProducts);
+      let table = new Table([thead, Tbody.products(arr)], {class: "arr-products", cellspacing: "0"});
+			table.elem.addEventListener("click", toggleChoiceButton);
+			return table.elem;
         }
         function rationalChoice() {
           let arrMinShelfLife = [];
@@ -235,10 +193,10 @@
               target.appendChild(num);
               target.setAttribute("count", "1");
             } else {
-              if (target.className !== "switch") {
+              if (target.className != "switch") {
                 target = target.parentNode;
               }
-              let i = target.parentNode.parentNode.getAttribute("index");
+              let i = target.getAttribute("index");
               let maxCount = arrProducts[i].count;
               let absoluteCount = parseInt(prompt("Сколько всего вы хотите выделить?"));
               if (absoluteCount == 0 || false) {

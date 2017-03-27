@@ -43,8 +43,8 @@ class Product {
             let select = document.querySelector("#form select");
             select.innerHTML = "";
             for (let i in productsCollection) {
-            let option = new Option(i, i);
-            select.appendChild(option);
+                let option = new Option(i, i);
+                select.appendChild(option);
             }
             alert("Продукт успешно добавлен в коллекцию");
         } else {
@@ -52,57 +52,56 @@ class Product {
         }
     }
     addProduct(event) {
-    if (!document.forms.addProduct.elements.countType.value) {
-        alert("Не указана единица измерения. Исправьте, и повторите попытку.");
-        return;
-    }
-    event.preventDefault();
-    let name = document.forms.addProduct.elements.name2.value;
-    let count = parseFloat(document.forms.addProduct.elements.count.value);
-    if (count <= 0 || !isNumeric(count)) {
-        alert("Количество не может быть меньше или равно 0");
-        return;
-    }
-    let shelfLife = parseInt(document.forms.addProduct.elements.shelfLife.value);
-    let i = 0;
-    let product = arrProducts[i];
-    while (i < arrProducts.length) {
-        if (product.name !== name) {
-        i++;
-        product = arrProducts[i];
-        } else {
-        if (product.shelfLife == shelfLife) {
-            product.count += count;
-            localStorage.arrProducts = JSON.stringify(arrProducts);
-            let tr = document.querySelectorAll(".arr-products tr");
-            tr[i].children[2].innerHTML = product.count + " " + product.countType;
-            alert("Продукт успешно добавлен");
-            productsCollection[product.name].numberAdditions++;
-            localStorage.productsCollection = JSON.stringify(productsCollection);
+        if (!document.forms.addProduct.elements.countType.value) {
+            alert("Не указана единица измерения. Исправьте, и повторите попытку.");
             return;
         }
-        i++;
+        event.preventDefault();
+        let name = document.forms.addProduct.elements.name2.value;
+        let count = parseFloat(document.forms.addProduct.elements.count.value);
+        if (count <= 0 || !isNumeric(count)) {
+            alert("Количество не может быть меньше или равно 0");
+            return;
+        }
+        let shelfLife = parseInt(document.forms.addProduct.elements.shelfLife.value);
+        let i = 0;
+        let product = arrProducts[i];
+        while (i < arrProducts.length) {
+            if (product.name !== name) {
+            i++;
+            product = arrProducts[i];
+            } else {
+            if (product.shelfLife == shelfLife) {
+                product.count += count;
+                localStorage.arrProducts = JSON.stringify(arrProducts);
+                let tr = document.querySelectorAll(".arr-products tr");
+                tr[i].children[2].innerHTML = product.count + " " + product.countType;
+                alert("Продукт успешно добавлен");
+                productsCollection[product.name].numberAdditions++;
+                localStorage.productsCollection = JSON.stringify(productsCollection);
+                return;
+            }
+            i++;
+            }
+        }
+        let obj = new Product(name, shelfLife, count);
+        arrProducts.push(obj);
+        localStorage.arrProducts = JSON.stringify(arrProducts);
+        document.querySelector(".arr-products tbody").appendChild(new Tr([{innerHTML: arrProducts[obj.index].name}, {innerHTML: arrProducts[obj.index].shelfLife + " дн"}, {innerHTML: arrProducts[obj.index].count + " " + arrProducts[i].countType}, {innerHTML: new Switch({select: "off", index: arrProducts[obj.index].index, count: 0}).elem.outerHTML}], {class: arrProducts[obj.index].frozen ? "frozen" : null}).elem);
+        productsCollection[name].numberAdditions++;
+        localStorage.productsCollection = JSON.stringify(productsCollection);
+        alert("Продукт успешно добавлен");
+        if (!localStorage._checker) {
+            let time = new Date();
+            time.setHours(0, 0, 0, 0);
+            localStorage._checker = time;
         }
     }
-    let obj = new Product(name, shelfLife, count);
-    arrProducts.push(obj);
-    localStorage.arrProducts = JSON.stringify(arrProducts);
-    let tr = createTrProduct(arrProducts, obj.index);
-    document.querySelector(".arr-products tbody").appendChild(tr);
-    productsCollection[name].numberAdditions++;
-    localStorage.productsCollection = JSON.stringify(productsCollection);
-    alert("Продукт успешно добавлен");
-    if (!localStorage._checker) {
-        let time = new Date();
-        time.setHours(0, 0, 0, 0);
-        localStorage._checker = time;
-    }
-    }
-    deleteProduct(index){
-    arrProducts.splice(index, 1);
-    for (let i = index; i < arrProducts.length; i++) {
-        arrProducts[i].index -= 1;
-    }
+        deleteProduct(index){
+        arrProducts.splice(index, 1);
+        for (let i = index; i < arrProducts.length; i++) {
+            arrProducts[i].index -= 1;
+        }
     }
 }
 function sortProducts(arr, method) {
