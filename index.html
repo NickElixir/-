@@ -16,7 +16,7 @@
   </head>
   <body>
     <script>
-        var arrProducts = localStorage.arrProducts ? JSON.parse(localStorage.arrProducts) : [];
+    	var arrProducts = localStorage.arrProducts ? JSON.parse(localStorage.arrProducts) : [];
         var productsCollection = localStorage.productsCollection ? JSON.parse(localStorage.productsCollection) : {};
         var shoppingLists = localStorage.shoppingLists ? JSON.parse(localStorage.shoppingLists) : {};
         function getRandomInt(min, max) {
@@ -117,70 +117,12 @@
             table.appendChild(Tbody.products(arr).elem);
           }
         }
-        function createTableProducts(arr) {
-			let thead = new Tbody("thead", [new Td("th", "Род и вид"), new Td("th", "Срок годности"), new Td("th", "Количество", {colspan: 2})]);
+      	function createTableProducts(arr) {
+			let thead = new Tbody("thead", [new Element("th", null, "Род и вид"), new Element("th", null, "Срок годности"), new Element("th", {colspan: 2}, "Количество")]);
 			for (let i in thead.children) thead.children[i].addEventListener("click", sortTableProducts);
-      let table = new Table([thead, Tbody.products(arr)], {class: "arr-products", cellspacing: "0"});
-			table.elem.addEventListener("click", toggleChoiceButton);
+      		let table = new Table([thead, Tbody.products(arr)], {class: "arr-products", cellspacing: "0"});
+			table.elem.addEventListener("click", sortTableProducts);
 			return table.elem;
-        }
-        function rationalChoice() {
-          let arrMinShelfLife = [];
-          let minshelfLife = arrProducts[0].shelfLife;
-          let alertString = "";
-          for(let i = 0; i < arrProducts.length; i++) {
-              if (arrProducts[i].shelfLife < minshelfLife) {
-                  minshelfLife = arrProducts[i].shelfLife;
-              }
-          }
-          for(let i = 0; i < arrProducts.length; i++) {
-              if(minshelfLife == arrProducts[i].shelfLife) {
-                  arrMinShelfLife.push(arrProducts[i]);
-              }
-          }
-          let rows = document.querySelectorAll('.arr-products tr');
-          for (let i = 0; i < arrMinShelfLife.length; i++) {
-            for (let j = 0; j < rows.length; j++) {
-              if (rows[j].getAttribute('index') == arrMinShelfLife[i].index) {
-                rows[j].className = 'lighted';
-              }
-            }
-          }
-          let button = document.getElementById("random-choice");
-          button.hidden = false;
-        }
-        function createButtonRationalChoice() {
-          let button = document.createElement("div");
-          button.className = "button";
-          button.innerHTML = "<p>Рациональный выбор</p>";
-          button.addEventListener("click", rationalChoice);
-          return button;
-        }
-        function randomChoiceOfRationals() {
-          let arrMinShelfLife = [];
-          let minshelfLife = arrProducts[0].shelfLife;
-          let alertString = "";
-          for(let i = 0; i < arrProducts.length; i++) {
-              if (arrProducts[i].shelfLife < minshelfLife) {
-                  minshelfLife = arrProducts[i].shelfLife;
-              }
-          }
-          for(let i = 0; i < arrProducts.length; i++) {
-              if(minshelfLife == arrProducts[i].shelfLife) {
-                  arrMinShelfLife.push(arrProducts[i]);
-              }
-          }
-           i = getRandomInt(0, (arrMinShelfLife.length - 1));
-            alert(arrMinShelfLife[i].name + " - " + arrMinShelfLife[i].shelfLife + " дн " + " - " + arrMinShelfLife[i].count + " " + arrMinShelfLife[i].countType);
-        }
-        function createButtonRandomChoiceOfRationals() {
-          let button = document.createElement('div');
-          button.className = "button";
-          button.innerHTML = "<p>Случайная подсказка</p>";
-          button.setAttribute("id", "random-choice");
-          button.addEventListener("click", randomChoiceOfRationals);
-          button.hidden = true;
-          return button;
         }
         function toggleChoiceButton(event) {
           let target = event.target;
@@ -281,8 +223,6 @@
           section.setAttribute("id", "main");
           section.className = "visible";
           section.appendChild(createTableProducts(arrProducts));
-          section.appendChild(createButtonRationalChoice());
-          section.appendChild(createButtonRandomChoiceOfRationals());
           section.appendChild(createButtonSaveChanges());
           let p = document.createElement("p");
           p.innerHTML = "При нажатии на заголовок колонки можно отсортировать таблицу по соответстующей характеристике.";

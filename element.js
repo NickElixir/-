@@ -8,6 +8,10 @@ class Element{
     render() {
         this.elem = document.createElement(this.tag);
         for (let i in this.options) this.elem.setAttribute(i, this.options[i]);
-        for (let i in this.elements) this.elem.appendChild(this.elements[i].elem);
+        if (this.elements){
+            if (this.elements instanceof Array) {
+                for (let i in this.elements) this.elem.appendChild(this.elements[i].elem);
+            } else this.elem.innerHTML = this.elements;
+        }
     }
 }
