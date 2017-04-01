@@ -1,21 +1,14 @@
-class ShoppingListItem extends Tr {
-    constructor(name, count, options) {
-        super();
-    }
-    render() {
-        super.render();
-    }
-}
-class ShoppingList extends Table {
+
+class ShoppingList extends Element {
     constructor(header, elements, options) {
         this.header = header;
-        super();
+        super(options, elements);
     }
     render() {
         super.render();
     }
     addItem(name, count) {
-        let item = new ShoppingListItem(name, count);
+        let item = new Element("tr", name, count);
         this.elements.push(item);
         this.render();
     }

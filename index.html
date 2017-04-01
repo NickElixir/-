@@ -9,7 +9,7 @@
     <!--<script src="C:\Users\Николай Луценко\Documents\GitHub\form.js"></script>-->
     <script src="note.js"></script>
     <script src="switch.js"></script>
-    <script src="table.js"></script>
+
 	<script src="list.js"></script>
 	<script src="menu.js"></script>
     <script src="product.js"></script>
@@ -19,9 +19,7 @@
     	var arrProducts = localStorage.arrProducts ? JSON.parse(localStorage.arrProducts) : [];
         var productsCollection = localStorage.productsCollection ? JSON.parse(localStorage.productsCollection) : {};
         var shoppingLists = localStorage.shoppingLists ? JSON.parse(localStorage.shoppingLists) : {};
-        function getRandomInt(min, max) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-        }
+        function getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
         function fadeOut(time) { 
           let EndTime = Date.now() + time;
           let _this = this;
@@ -35,215 +33,164 @@
               }
                 else
             _this.style.opacity = (step/time);
-              setTimeout(handler,0);
+              setTimeout(handler, 0);
             }
         }
-        function isNumeric(n) {
-        	return !isNaN(parseFloat(n)) && isFinite(n);
-        }
-        function createDivContainer() {
-			document.body.appendChild(new Element("div", {class: "container"}).elem);
-        }
-        function createMenu() {
-		  document.body.appendChild(new Menu([new Li("Главная", {key: "main"}), new Li("Добавить продукт", {key: "form"}), new Li("О сервисе", {key: "about"})]).elem);
-        }
+        function isNumeric(n) { return !isNaN(parseFloat(n)) && isFinite(n); }
         function showComment(event) {
-          let target = event.target;
-          while (target.className !== "note") {
-            target = target.parentNode;
-          }
-          target.children[0].hidden = !target.children[0].hidden;
+        	let target = event.target;
+        	while (target.className !== "note") target = target.parentNode;
+          	target.children[0].hidden = !target.children[0].hidden;
         }
         function focusRadioParagraph(event) {
-          if (event.target.tagName == "P") {
-            event.target.children[0].checked = true;
-          }
+          	if (event.target.tagName == "P") event.target.children[0].checked = true;
         }
         function changeShelfLifeValue(event) {
-          if (productsCollection) {
-            if (event.target.tagName = "select") {
-              for (let i in productsCollection) {
-                if (i == document.forms.addProduct.elements.name2.value) {
-                  if (document.forms.addProduct.elements.checkFrozen.checked) {
-                    document.forms.addProduct.elements.shelfLife.value = productsCollection[i].shelfLifeFrozen;
-                  } else {
-                    document.forms.addProduct.elements.shelfLife.value = productsCollection[i].shelfLifeNotFrozen;
-                  }
-                  break;
-                }
-              }
-            } else {
-              if (document.forms.addProduct.elements.checkFrozen.checked) {
-                document.forms.addProduct.elements.shelfLife.value = productsCollection[i].shelfLifeFrozen;
-              } else {
-                document.forms.addProduct.elements.shelfLife.value = productsCollection[i].shelfLifeNotFrozen;
-              }
-            }
-          }
+          	if (productsCollection) {
+            	if (event.target.tagName = "select") {
+					for (let i in productsCollection) {
+						if (i == document.forms.addProduct.elements.name2.value) {
+							if (document.forms.addProduct.elements.checkFrozen.checked) document.forms.addProduct.elements.shelfLife.value = productsCollection[i].shelfLifeFrozen;
+							else document.forms.addProduct.elements.shelfLife.value = productsCollection[i].shelfLifeNotFrozen;
+							break;
+						}
+					}
+            	} else {
+              		if (document.forms.addProduct.elements.checkFrozen.checked) document.forms.addProduct.elements.shelfLife.value = productsCollection[i].shelfLifeFrozen;
+					else  document.forms.addProduct.elements.shelfLife.value = productsCollection[i].shelfLifeNotFrozen;
+            	}
+        	}
         }
         function updateShelfLifes() {
-          if (!localStorage._checker) return;
-          let nowDay = new Date();
-          nowDay.setHours(0, 0, 0, 0);
-          let checker = new Date(localStorage._checker);
-          console.log(checker + " " + nowDay);
-          if (parseInt(checker.getTime()) !== nowDay.getTime()) {
-            for (let i = 0; i < arrProducts.length; i++) {
-              let difference = nowDay.getTime() - checker.getTime();
-              difference = difference/86400000;
-              console.log("Difference - " + difference); 
-              console.log("Current shelf life - " + arrProducts[i].shelfLife);
-              arrProducts[i].shelfLife = arrProducts[i].shelfLife - difference;
-            }
-            localStorage.arrProducts = JSON.stringify(arrProducts);
-            localStorage._checker = nowDay;
-          }
+          	if (!localStorage._checker) return;
+          	let nowDay = new Date();
+          	nowDay.setHours(0, 0, 0, 0);
+          	let checker = new Date(localStorage._checker);
+          	console.log(checker + " " + nowDay);
+          	if (parseInt(checker.getTime()) !== nowDay.getTime()) {
+            	for (let i = 0; i < arrProducts.length; i++) {
+              		let difference = nowDay.getTime() - checker.getTime();
+              		difference = difference/86400000;
+              		console.log("Difference - " + difference); 
+              		console.log("Current shelf life - " + arrProducts[i].shelfLife);
+              		rrProducts[i].shelfLife = arrProducts[i].shelfLife - difference;
+            	}
+            	localStorage.arrProducts = JSON.stringify(arrProducts);
+            	localStorage._checker = nowDay;
+          	}
         }
         function sortTableProducts(event) {
-          if (document.querySelector(".arr-products tbody")) {
-            switch (event.target.innerHTML[0]) {
-              case "Р":
-                var arr = sortProducts(arrProducts, "name");
-                break;
-              case "С":
-                var arr = sortProducts(arrProducts, "shelfLife");
-                break;
-              case "К":
-                var arr = sortProducts(arrProducts, "count");
-                break;
-            }
+			if (document.querySelector(".arr-products tbody")) {
+				switch (event.target.innerHTML[0]) {
+					case "Р":
+						var arr = sortProducts(arrProducts, "name");
+						break;
+					case "С":
+						var arr = sortProducts(arrProducts, "shelfLife");
+						break;
+					case "К":
+						var arr = sortProducts(arrProducts, "count");
+			}
             let table = document.querySelector(".arr-products");
             table.removeChild(table.querySelector("tbody"));
-            table.appendChild(Tbody.products(arr).elem);
+            table.appendChild(Product.productsTable(arrProducts).elem);
           }
         }
       	function createTableProducts(arr) {
-			let thead = new Tbody("thead", [new Element("th", null, "Род и вид"), new Element("th", null, "Срок годности"), new Element("th", {colspan: 2}, "Количество")]);
-			for (let i in thead.children) thead.children[i].addEventListener("click", sortTableProducts);
-      		let table = new Table([thead, Tbody.products(arr)], {class: "arr-products", cellspacing: "0"});
-			table.elem.addEventListener("click", sortTableProducts);
-			return table.elem;
+			let thead = new Element("thead", null, [new Element("th", null, "Род и вид"), new Element("th", null, "Срок годности"), new Element("th", {colspan: 2}, "Количество")]);
+			for (let i = 0; i < thead.elem.children.length; i++) thead.elem.children[i].addEventListener("click", sortTableProducts);
+      		let table = new Element("table", {class: "arr-products", cellspacing: "0"}, [thead, Product.productsTbody(arr)]);
+			table.elem.addEventListener("click", toggleChoiceButton);
+			return table;
         }
         function toggleChoiceButton(event) {
-          let target = event.target;
-          if (target.className == "switch" || target.parentNode.className == "switch") {
-            if (target.getAttribute("select") == "off") {
-              target.style.backgroundColor = "#f40";
-              target.setAttribute("select", "on");
-              let num = document.createElement('p');
-              num.innerHTML = '1';
-              target.appendChild(num);
-              target.setAttribute("count", "1");
-            } else {
-              if (target.className != "switch") {
-                target = target.parentNode;
-              }
-              let i = target.getAttribute("index");
-              let maxCount = arrProducts[i].count;
-              let absoluteCount = parseInt(prompt("Сколько всего вы хотите выделить?"));
-              if (absoluteCount == 0 || false) {
-                target.removeChild(target.firstChild);
-                target.style.backgroundColor = "#0f9";
-                target.setAttribute("select", "off");
-                target.setAttribute("count", "0");
-              } else if (absoluteCount > 0) {
-                if (absoluteCount > maxCount) {
-                  absoluteCount = maxCount;
-                }
-                target.setAttribute("count", absoluteCount);
-                target.innerHTML = "<p>" + absoluteCount + "</p>";
-              }
-            }
-          }
+          	let target = event.target;
+          	if (target.className == "switch" || target.parentNode.className == "switch") {
+            	if (target.getAttribute("select") == "off") {
+              		target.style.backgroundColor = "#f40";
+              		target.setAttribute("select", "on");
+              		target.appendChild(new Element("p", null, "1").elem);
+              		target.setAttribute("count", "1");
+           		} else {
+              		if (target.className != "switch") {
+                		target = target.parentNode;
+              		}
+              		let i = target.getAttribute("index");
+              		let maxCount = arrProducts[i].count;
+              		let absoluteCount = parseInt(prompt("Сколько всего вы хотите выделить?"));
+              		if (absoluteCount == 0) {
+						target.removeChild(target.firstChild);
+						target.style.backgroundColor = "#0f9";
+						target.setAttribute("select", "off");
+						target.setAttribute("count", "0");
+              		} else if (absoluteCount > 0) {
+						if (absoluteCount > maxCount) {
+							absoluteCount = maxCount;
+						}
+						target.setAttribute("count", absoluteCount);
+						target.innerHTML = "<p>" + absoluteCount + "</p>";
+              		}
+           		}
+          	}
         }
         function saveChanges() {
-          let confidence = confirm("Вы уверены, что хотите сохранить результат?");
-          if (confidence) {
-            if (!localStorage._checker) {
-            let time = new Date();
-            time.setHours(0, 0, 0, 0);
-            localStorage._checker = time;
-            }
-            let switches = document.body.querySelectorAll(".switch");
-            let toTrash = [];
-            for (let i = 0; i < switches.length; i++) {
-              let j = switches[i].getAttribute("index");
-              let maxCount = arrProducts[j].count;
-              let count = switches[i].getAttribute("count");
-              if (count == maxCount) {
-                toTrash.push(i)
-              } else if (count !== 0) {
-                let newCount = maxCount - count;
-                arrProducts[j].count = newCount;
-                switches[i].setAttribute("count", newCount);
-                switches[i].parentNode.parentNode.children[2].innerHTML = newCount + " " + arrProducts[j].countType;
-                switches[i].innerHTML = "";
-                switches[i].style.backgroundColor = "#0f9";
-                switches[i].setAttribute("select", "off");
-                switches[i].setAttribute("count", "0");
-              }
-            }
-            if(toTrash.length){
-              toTrash.reverse().forEach(i=>{
-                Product.prototype.deleteProduct(i);
-                fadeOut.call(switches[i].closest('tr'), 500);
-                setTimeout(function() {
-                  switches[i].closest('tr').remove(); 
-                }, 600);
-              })
-              setTimeout(function(){
-                let trs = document.querySelectorAll('.arr-products tbody tr');
-                Array.prototype.forEach.call(trs,(e, ind)=>{
-                    e.setAttribute('index', ind);
-                    e.querySelector('.switch').setAttribute('index', ind);
-                })
-              },1100)
-            }
-          localStorage.arrProducts = JSON.stringify(arrProducts);
-          localStorage.productsCollection = JSON.stringify(productsCollection);
-          }
+        	let confidence = confirm("Вы уверены, что хотите сохранить результат?");
+          	if (confidence) {
+				if (!localStorage._checker) {
+					let time = new Date();
+					time.setHours(0, 0, 0, 0);
+					localStorage._checker = time;
+				}
+				let switches = document.body.querySelectorAll(".arr-products .switch");
+				let toTrash = [];
+				for (let i = 0; i < switches.length; i++) {
+					let j = switches[i].getAttribute("index");
+					let maxCount = arrProducts[j].count;
+					let count = switches[i].getAttribute("count");
+					if (count == maxCount) toTrash.push(i)
+					else if (count != 0) {
+						let newCount = maxCount - count;
+						arrProducts[j].count = newCount;
+						switches[i].setAttribute("count", newCount);
+						switches[i].parentNode.children[2].innerHTML = newCount + " " + arrProducts[j].countType;
+						switches[i].innerHTML = "";
+						switches[i].style.backgroundColor = "#0f9";
+						switches[i].setAttribute("select", "off");
+						switches[i].setAttribute("count", "0");
+					}
+            	}
+            	if (toTrash.length){
+                	toTrash.reverse().forEach(i=>{
+            			Product.prototype.deleteProduct(i);
+                		fadeOut.call(switches[i].closest('tr'), 500);
+                		setTimeout(function() {
+                    		switches[i].closest('tr').remove(); 
+                		}, 600);
+              		});
+            		setTimeout(function() {
+                		let trs = document.querySelectorAll('.arr-products tbody tr');
+                		Array.prototype.forEach.call(trs,(e, ind)=>{
+                    		e.setAttribute('index', ind);
+                    		e.querySelector('.switch').setAttribute('index', ind);
+                		});
+              		}, 1100)
+          		}
+          		localStorage.arrProducts = JSON.stringify(arrProducts);
+          		localStorage.productsCollection = JSON.stringify(productsCollection);
+          	}
         }
         function createButtonSaveChanges() {
-          let button = document.createElement("div");
-          button.className = "button";
-          button.innerHTML = "<p>Сохранить изменения</p>";
-          button.addEventListener("click", saveChanges);
-          return button;
-        }
-        function createAbout() {
-          let section = document.createElement("section");
-          section.setAttribute("id", "about");
-          section.innerHTML = "<h1>О сервисе</h1><p>Задача программы – автоматическая сортировка продуктов по сроку годности. В будущем будет реализованы рекомендации и список попупок</p><p>Автор – Nick Elixir</p>";
-          section.className = "invisible";
-          document.body.querySelector(".container").appendChild(section);
-        }
-        function writeProducts() {
-          let div = document.querySelector('.container'); 
-          let section = document.createElement("section");
-          section.setAttribute("id", "main");
-          section.className = "visible";
-          section.appendChild(createTableProducts(arrProducts));
-          section.appendChild(createButtonSaveChanges());
-          let p = document.createElement("p");
-          p.innerHTML = "При нажатии на заголовок колонки можно отсортировать таблицу по соответстующей характеристике.";
-          section.appendChild(p);
-          div.appendChild(section);
-        }
-        function createShoppingListSection() {
-          let section = document.createElement("section");
-          section.setAttribute("id", "create-shopping-list");
-          section.className("invisible");
-		      let form = new Form("createShoppingList", [new Input("shoppingListName", "Название")], "Создать список продуктов");
-          section.appendChild(form.elem);
-
+			let button = new Element("div", {class: "button"}, "<p>Сохранить изменения</p>");
+          	button.elem.addEventListener("click", saveChanges);
+        	return button;
         }
         updateShelfLifes();
-        createMenu();
-        createDivContainer();
-        writeProducts();
+        document.body.appendChild(new Menu([new Li("Главная", {key: "main"}), new Li("Добавить продукт", {key: "form"}), new Li("О сервисе", {key: "about"})]).elem);
+        document.body.appendChild(new Element("div", {class: "container"}).elem);
+        document.querySelector('.container').appendChild(new Element("section", {id: "main", class: "visible"}, [createTableProducts(arrProducts), createButtonSaveChanges(), new Element("p", null, "При нажатии на заголовок колонки можно отсортировать таблицу по соответстующей характеристике.")]).elem);
 		//Form for creating and adding products
         document.body.querySelector(".container").appendChild(new Element("section", {id: "form", class: "invisible"}, [Form.createProduct(), Form.addProduct()]).elem);
-        createAbout();
+        document.body.querySelector(".container").appendChild(new Element("section", {id: "about", class: "invisible"}, "<h1>О сервисе</h1><p>Задача программы – автоматическая сортировка продуктов по сроку годности. В будущем будет реализованы рекомендации и список попупок</p>").elem);
         console.log(performance.now());
     </script>
   </body>
