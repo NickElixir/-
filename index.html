@@ -73,7 +73,7 @@
               		difference = difference/86400000;
               		console.log("Difference - " + difference); 
               		console.log("Current shelf life - " + arrProducts[i].shelfLife);
-              		rrProducts[i].shelfLife = arrProducts[i].shelfLife - difference;
+              		arrProducts[i].shelfLife = arrProducts[i].shelfLife - difference;
             	}
             	localStorage.arrProducts = JSON.stringify(arrProducts);
             	localStorage._checker = nowDay;
@@ -93,7 +93,7 @@
 			}
             let table = document.querySelector(".arr-products");
             table.removeChild(table.querySelector("tbody"));
-            table.appendChild(Product.productsTable(arrProducts).elem);
+            table.appendChild(Product.productsTbody(arr).elem);
           }
         }
       	function createTableProducts(arr) {
@@ -185,10 +185,9 @@
         	return button;
         }
         updateShelfLifes();
-        document.body.appendChild(new Menu([new Li("Главная", {key: "main"}), new Li("Добавить продукт", {key: "form"}), new Li("О сервисе", {key: "about"})]).elem);
+        document.body.appendChild(new Menu([new Element("li", {key: "main"}, "Главная"), new Element("li", {key: "form"}, "Добавить продукт"), new Element("li", {key: "about"}, "О сервисе")], null).elem);
         document.body.appendChild(new Element("div", {class: "container"}).elem);
-        document.querySelector('.container').appendChild(new Element("section", {id: "main", class: "visible"}, [createTableProducts(arrProducts), createButtonSaveChanges(), new Element("p", null, "При нажатии на заголовок колонки можно отсортировать таблицу по соответстующей характеристике.")]).elem);
-		//Form for creating and adding products
+        document.body.querySelector('.container').appendChild(new Element("section", {id: "main", class: "visible"}, [createTableProducts(arrProducts), createButtonSaveChanges(), new Element("p", null, "При нажатии на заголовок колонки можно отсортировать таблицу по соответстующей характеристике.")]).elem);
         document.body.querySelector(".container").appendChild(new Element("section", {id: "form", class: "invisible"}, [Form.createProduct(), Form.addProduct()]).elem);
         document.body.querySelector(".container").appendChild(new Element("section", {id: "about", class: "invisible"}, "<h1>О сервисе</h1><p>Задача программы – автоматическая сортировка продуктов по сроку годности. В будущем будет реализованы рекомендации и список попупок</p>").elem);
         console.log(performance.now());

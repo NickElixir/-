@@ -103,17 +103,17 @@ class Product {
             arrProducts[i].index -= 1;
         }
     }
-    static productsTbody() {
+    static productsTbody(array) {
         let elements = [];
-        for (let i in arrProducts) elements.push(new Element("tr", {class: arrProducts[i].frozen ? "frozen" : ""}, [new Element("td", null, arrProducts[i].name), new Element("td", null, arrProducts[i].shelfLife + " дн"), new Element("td", null, arrProducts[i].count + " " + arrProducts[i].countType), new Switch({select: "off", index: arrProducts[i].index, count: 0})]));
+        for (let i in array) elements.push(new Element("tr", {class: array[i].frozen ? "frozen" : ""}, [new Element("td", null, array[i].name), new Element("td", null, array[i].shelfLife + " дн"), new Element("td", null, array[i].count + " " + array[i].countType), new Switch({select: "off", index: array[i].index, count: 0})]));
         return new Element("tbody", null, elements);
     }
     static productsTable(array) {
         let thead = new Element("thead", null, [new Element("th", null, "Род и вид"), new Element("th", null, "Срок годности"), new Element("th", {colspan: 2}, "Количество")]);
         for (let i = 0; i < thead.elem.children.length; i++) thead.elem.children[i].addEventListener("click", sortTableProducts);
-        let table = new Element("table", {class: "arr-products", cellspacing: "0"}, [thead, Product.productsTbody()]);
+        let table = new Element("table", {class: "arr-products", cellspacing: "0"}, [thead, Product.productsTbody(array)]);
         table.elem.addEventListener("click", toggleChoiceButton);
-        return table.elem;
+        return table;
     }
 }
 function sortProducts(arr, method) {
