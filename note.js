@@ -1,25 +1,20 @@
-class Note {
+class Note extends Element {
     constructor(header, text) {
-        this.header = header;
+        super("span", {class: "note"}, header, [{event: "click", handler: function(event) {
+            let target = event.target;
+            while (target.className !== "note") {
+                target = target.parentNode;
+            }
+            target.children[1].hidden = !target.children[1].hidden;
+        }}]);
         this.text = text;
         this.render();
     }
     render() {
-        let header = document.createElement("span");
-        header.className = "note";
-        header.innerHTML = this.header;
-        let text = document.createElement("span");
-        text.innerHTML = this.text;
-        text.hidden = true;
-        header.appendChild(document.createElement("br"));
-        header.appendChild(text);
-        header.addEventListener("click", function(event) {
-        let target = event.target;
-        while (target.className !== "note") {
-            target = target.parentNode;
-        }
-        target.children[1].hidden = !target.children[1].hidden;
-        });
-        this.elem = header;
+        super.render();
+        let text = new Element("span", null, this.text);
+        text.elem.hidden = true;
+        this.elem.appendChild(document.createElement("br"));
+        this.elem.appendChild(text.elem);
     }
 }

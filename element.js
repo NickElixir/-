@@ -15,7 +15,6 @@ class Element{
                 for (let i in this.elements) this.elem.appendChild(this.elements[i].elem);
             } else this.elem.innerHTML = this.elements;
         }
-        console.log(this.eventListeners);
         for (let i in this.eventListeners) {
             this.elem.addEventListener(this.eventListeners[i].event, this.eventListeners[i].handler);
         }

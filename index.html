@@ -8,9 +8,6 @@
     <script src="form.js"></script>
     <!--<script src="C:\Users\Николай Луценко\Documents\GitHub\form.js"></script>-->
     <script src="note.js"></script>
-    <script src="switch.js"></script>
-
-	<script src="list.js"></script>
 	<script src="menu.js"></script>
     <script src="product.js"></script>
   </head>
@@ -90,18 +87,11 @@
 						break;
 					case "К":
 						var arr = sortProducts(arrProducts, "count");
-			}
-            let table = document.querySelector(".arr-products");
-            table.removeChild(table.querySelector("tbody"));
-            table.appendChild(Product.productsTbody(arr).elem);
-          }
-        }
-      	function createTableProducts(arr) {
-			let thead = new Element("thead", null, [new Element("th", null, "Род и вид"), new Element("th", null, "Срок годности"), new Element("th", {colspan: 2}, "Количество")]);
-			for (let i = 0; i < thead.elem.children.length; i++) thead.elem.children[i].addEventListener("click", sortTableProducts);
-      		let table = new Element("table", {class: "arr-products", cellspacing: "0"}, [thead, Product.productsTbody(arr)]);
-			table.elem.addEventListener("click", toggleChoiceButton);
-			return table;
+				}
+				let table = document.querySelector(".arr-products");
+				table.removeChild(table.querySelector("tbody"));
+				table.appendChild(Product.tbody(arr).elem);
+          	}
         }
         function toggleChoiceButton(event) {
           	let target = event.target;
@@ -179,15 +169,10 @@
           		localStorage.productsCollection = JSON.stringify(productsCollection);
           	}
         }
-        function createButtonSaveChanges() {
-			let button = new Element("div", {class: "button"}, "<p>Сохранить изменения</p>");
-          	button.elem.addEventListener("click", saveChanges);
-        	return button;
-        }
         updateShelfLifes();
         document.body.appendChild(new Menu([new Element("li", {key: "main"}, "Главная"), new Element("li", {key: "form"}, "Добавить продукт"), new Element("li", {key: "about"}, "О сервисе")], null).elem);
         document.body.appendChild(new Element("div", {class: "container"}).elem);
-        document.body.querySelector('.container').appendChild(new Element("section", {id: "main", class: "visible"}, [createTableProducts(arrProducts), createButtonSaveChanges(), new Element("p", null, "При нажатии на заголовок колонки можно отсортировать таблицу по соответстующей характеристике.")]).elem);
+        document.body.querySelector('.container').appendChild(new Element("section", {id: "main", class: "visible"}, [new Element("table", {class: "arr-products", cellspacing: "0"}, [new Element("thead", null, [new Element("th", null, "Род и вид", [{event: "click", handler: sortTableProducts}]), new Element("th", null, "Срок годности", [{event: "click", handler: sortTableProducts}]), new Element("th", {colspan: 2}, "Количество", [{event: "click", handler: sortTableProducts}])]), Product.tbody(arrProducts)], [{event: "click", handler: toggleChoiceButton}]), new Element("div", {class: "button"}, "<p>Сохранить изменения</p>", [{event: "click", handler: saveChanges}]), new Element("p", null, "При нажатии на заголовок колонки можно отсортировать таблицу по соответстующей характеристике.")]).elem);
         document.body.querySelector(".container").appendChild(new Element("section", {id: "form", class: "invisible"}, [Form.createProduct(), Form.addProduct()]).elem);
         document.body.querySelector(".container").appendChild(new Element("section", {id: "about", class: "invisible"}, "<h1>О сервисе</h1><p>Задача программы – автоматическая сортировка продуктов по сроку годности. В будущем будет реализованы рекомендации и список попупок</p>").elem);
         console.log(performance.now());
