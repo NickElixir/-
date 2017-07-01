@@ -52,11 +52,11 @@ class Product {
         }
     }
     addProduct(event) {
+        event.preventDefault();
         if (!document.forms.addProduct.elements.countType.value) {
             alert("Не указана единица измерения. Исправьте, и повторите попытку.");
             return;
         }
-        event.preventDefault();
         let name = document.forms.addProduct.elements.name2.value;
         let count = parseFloat(document.forms.addProduct.elements.count.value);
         if (count <= 0 || !isNumeric(count)) {
